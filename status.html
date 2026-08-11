@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAIRO — Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg2: #0a0a10;
+    --bg3: #0f0f1a;
+    --card: #0d0d16;
+    --card2: #12121f;
+    --indigo: #5c6cff;
+    --indigo2: #7b89ff;
+    --indigo3: #3a4aee;
+    --purple: #9747ff;
+    --glow: rgba(92,108,255,0.18);
+    --border: rgba(92,108,255,0.18);
+    --border2: rgba(92,108,255,0.08);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --green: #00ffaa;
+    --yellow: #ffc444;
+    --red: #ff4466;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(5,5,7,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .nav-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-decoration: none;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--indigo); }
+
+  .nav-back {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+
+  .page-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--indigo);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .page-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 64px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    padding: 12px 20px;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-dot.undetected { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .legend-dot.updating   { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .legend-dot.detected   { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+  .legend-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+
+  /* STATUS CARDS */
+  .status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .status-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-left: 3px solid transparent;
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 24px;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .status-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .status-card:hover::before { opacity: 1; }
+  .status-card:hover { background: var(--card2); }
+
+  .status-card.undetected { border-left-color: var(--green); }
+  .status-card.updating   { border-left-color: var(--yellow); }
+  .status-card.detected   { border-left-color: var(--red); }
+
+  .card-left { display: flex; align-items: center; gap: 20px; }
+
+  .card-icon {
+    font-size: 28px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    flex-shrink: 0;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .card-info { display: flex; flex-direction: column; gap: 6px; }
+
+  .card-game {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--indigo);
+    text-transform: uppercase;
+  }
+
+  .card-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+
+  .card-updated {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text3);
+  }
+
+  .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .status-badge.undetected {
+    color: var(--green);
+    border-color: rgba(0,255,170,0.2);
+    background: rgba(0,255,170,0.05);
+  }
+  .status-badge.updating {
+    color: var(--yellow);
+    border-color: rgba(255,196,68,0.2);
+    background: rgba(255,196,68,0.05);
+  }
+  .status-badge.detected {
+    color: var(--red);
+    border-color: rgba(255,68,102,0.2);
+    background: rgba(255,68,102,0.05);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  .undetected .status-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .updating   .status-dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation: none; }
+  .detected   .status-dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* FOOTER NOTE */
+  .status-note {
+    margin-top: 48px;
+    padding: 20px 28px;
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--indigo);
+    background: var(--card);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+  .status-note span { color: var(--indigo2); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 48px;
+    border-top: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .footer-logo span { color: var(--indigo); }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">KAI<span>RO</span></a>
+  <a href="index.html" class="nav-back">← Back to Store</a>
+</nav>
+
+<main>
+  <div class="page-label">// System Status</div>
+  <h1 class="page-title">Product Status</h1>
+  <p class="page-sub">Live status for all Kairo products. Updated after every patch or anti-cheat change.</p>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot undetected"></div>
+      <span class="legend-label">Undetected</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot updating"></div>
+      <span class="legend-label">Updating</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot detected"></div>
+      <span class="legend-label">Detected</span>
+    </div>
+  </div>
+
+  <!-- STATUS CARDS -->
+  <div class="status-list">
+
+    <div class="status-card undetected">
+      <div class="card-left">
+        <div class="card-icon">🎯</div>
+        <div class="card-info">
+          <div class="card-game">Apex Legends</div>
+          <div class="card-name">APEX</div>
+          <div class="card-updated">Last updated — August 10, 2025</div>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="status-badge undetected">
+          <div class="status-dot"></div>
+          Undetected
+        </div>
+      </div>
+    </div>
+
+    <div class="status-card undetected">
+      <div class="card-left">
+        <div class="card-icon">🔧</div>
+        <div class="card-info">
+          <div class="card-game">Rust</div>
+          <div class="card-name">RUSTT</div>
+          <div class="card-updated">Last updated — August 10, 2025</div>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="status-badge undetected">
+          <div class="status-dot"></div>
+          Undetected
+        </div>
+      </div>
+    </div>
+
+    <div class="status-card undetected">
+      <div class="card-left">
+        <div class="card-icon">⚡</div>
+        <div class="card-info">
+          <div class="card-game">Fortnite</div>
+          <div class="card-name">FORTNITE</div>
+          <div class="card-updated">Last updated — August 10, 2025</div>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="status-badge undetected">
+          <div class="status-dot"></div>
+          Undetected
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="status-note">
+    <span>⟡ NOTE —</span> If a product is detected we pull it immediately and push an update before relisting. Do not use any product marked as Detected or Updating. Join our <a href="https://discord.gg/dhHptTkB6D" target="_blank" style="color:var(--indigo2);text-decoration:none;">Discord</a> for real-time status alerts.
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">KAI<span>RO</span></div>
+  <div class="footer-copy">© 2025 KAIRO. All rights reserved.</div>
+</footer>
+
+</body>
+</html>

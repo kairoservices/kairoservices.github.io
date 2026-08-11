@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAIRO — Premium Game Enhancements</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg2: #0a0a10;
+    --bg3: #0f0f1a;
+    --card: #0d0d16;
+    --card2: #12121f;
+    --indigo: #5c6cff;
+    --indigo2: #7b89ff;
+    --indigo3: #3a4aee;
+    --purple: #9747ff;
+    --glow: rgba(92,108,255,0.18);
+    --glow2: rgba(92,108,255,0.06);
+    --border: rgba(92,108,255,0.18);
+    --border2: rgba(92,108,255,0.08);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --green: #00ffaa;
+    --red: #ff4466;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* SCANLINES */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 0 48px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(5,5,7,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .nav-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+  }
+  .nav-logo span { color: var(--indigo); }
+  .nav-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--indigo), transparent);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text2);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--indigo2); }
+
+  .nav-discord {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--indigo2);
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 8px 18px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-discord::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--indigo);
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+    z-index: -1;
+  }
+  .nav-discord:hover { color: #fff; border-color: var(--indigo); }
+  .nav-discord:hover::before { transform: translateX(0); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 120px 48px 80px;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(92,108,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(92,108,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .hero-orb-1 {
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(92,108,255,0.15) 0%, transparent 70%);
+    top: 10%; left: 50%;
+    transform: translateX(-50%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+  .hero-orb-2 {
+    width: 400px; height: 300px;
+    background: radial-gradient(ellipse, rgba(151,71,255,0.1) 0%, transparent 70%);
+    bottom: 20%; left: 20%;
+    animation: pulse 8s ease-in-out infinite 2s;
+  }
+  .hero-orb-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(ellipse, rgba(92,108,255,0.08) 0%, transparent 70%);
+    top: 30%; right: 15%;
+    animation: pulse 7s ease-in-out infinite 4s;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: translateX(0) scale(1); }
+    50% { opacity: 0.6; transform: translateX(0) scale(1.1); }
+  }
+
+  @keyframes statuspulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--indigo2);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge::before, .hero-badge::after {
+    content: '';
+    width: 40px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--indigo));
+  }
+  .hero-badge::after { background: linear-gradient(90deg, var(--indigo), transparent); }
+
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(72px, 12vw, 140px);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: #fff;
+    animation: fadeUp 0.8s ease 0.1s both;
+    position: relative;
+  }
+  .hero-title .glow-text {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(92,108,255,0.6);
+    position: relative;
+  }
+  .hero-title .glow-text::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0; top: 0;
+    color: var(--indigo2);
+    filter: blur(20px);
+    opacity: 0.5;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--text2);
+    letter-spacing: 2px;
+    margin-top: 28px;
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.8;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    animation: fadeUp 0.8s ease 0.3s both;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--indigo2), var(--indigo));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(92,108,255,0.5), 0 0 60px rgba(92,108,255,0.2); }
+
+  .btn-ghost {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--indigo2);
+    text-decoration: none;
+    padding: 15px 40px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    background: transparent;
+  }
+  .btn-ghost:hover {
+    border-color: var(--indigo2);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(92,108,255,0.2);
+    background: rgba(92,108,255,0.08);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 60px;
+    margin-top: 80px;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--indigo2);
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION COMMON */
+  section {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--indigo);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '//';
+    opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 60px;
+  }
+  .section-title em {
+    font-style: normal;
+    color: var(--indigo2);
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* PRODUCTS */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+  }
+
+  .product-card {
+    background: var(--card);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    cursor: pointer;
+  }
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .product-card:hover { background: var(--card2); }
+  .product-card:hover::before { transform: scaleX(1); }
+
+  .product-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(92,108,255,0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .product-card:hover::after { opacity: 1; }
+
+  .product-game-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--indigo);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .product-game-tag::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--indigo);
+  }
+
+  .product-icon {
+    width: 56px; height: 56px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: rgba(92,108,255,0.05);
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .product-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+
+  .product-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  .product-price-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .product-price {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--indigo2);
+  }
+  .product-price span {
+    font-size: 14px;
+    color: var(--text3);
+    font-weight: 400;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  .stock-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stock-badge.in-stock {
+    color: var(--green);
+    border: 1px solid rgba(0,255,170,0.25);
+    background: rgba(0,255,170,0.05);
+  }
+  .stock-badge.low-stock {
+    color: #ffaa00;
+    border: 1px solid rgba(255,170,0,0.25);
+    background: rgba(255,170,0,0.05);
+  }
+  .stock-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .product-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+  }
+  .feature {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+  }
+  .feature::before {
+    content: '▸';
+    color: var(--indigo);
+    font-size: 9px;
+  }
+
+  .btn-card-primary {
+    display: block;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  }
+  .btn-card-primary:hover {
+    box-shadow: 0 0 24px rgba(92,108,255,0.5);
+  }
+  .btn-card-secondary {
+    display: block;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 13px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    transition: all 0.3s;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  }
+  .btn-card-secondary:hover { border-color: var(--border); color: var(--text); }
+
+  /* FEATURES STRIP */
+  .features-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+    margin: 0 0 160px;
+  }
+  .feature-item {
+    background: var(--card);
+    padding: 36px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .feature-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .feature-text {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+    background: var(--bg2);
+    padding: 16px 0;
+    margin: 0 -48px;
+  }
+  .ticker {
+    display: flex;
+    gap: 60px;
+    animation: tick 30s linear infinite;
+    width: max-content;
+  }
+  .ticker-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text3);
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ticker-item span { color: var(--indigo); }
+  @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ===================== PRODUCT PAGE ===================== */
+  .page { display: none; }
+  .page.active { display: block; }
+  #main-page.active, body[data-page="home"] #main-page { display: block; }
+  body[data-page="products"] #products-page { display: block; }
+  body[data-page="buy"] #buy-page { display: block; }
+  body[data-page="status"] #status-page { display: block; }
+
+  /* PRODUCTS FULL PAGE */
+  .products-page-hero {
+    padding: 160px 48px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .products-full-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+  }
+
+  .product-card-full {
+    background: var(--card);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+  .product-card-full::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .product-card-full:hover { background: var(--card2); }
+  .product-card-full:hover::before { transform: scaleX(1); }
+
+  .product-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .product-plan-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+  .plan-chip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    background: rgba(92,108,255,0.04);
+    text-transform: uppercase;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .plan-chip.selected, .plan-chip:hover {
+    border-color: var(--indigo2);
+    color: var(--indigo2);
+    background: rgba(92,108,255,0.1);
+  }
+
+  .plan-price-display {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--indigo2);
+    margin: 16px 0;
+  }
+  .plan-price-display sub {
+    font-size: 16px;
+    color: var(--text3);
+    font-weight: 400;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 24px 0 32px;
+  }
+  .feature-list li {
+    font-size: 13px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  .feature-list li::before {
+    content: '✦';
+    color: var(--indigo);
+    font-size: 8px;
+    flex-shrink: 0;
+  }
+
+  /* BUY PAGE */
+  .buy-page-wrap {
+    min-height: 100vh;
+    padding: 120px 48px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .buy-panel {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .buy-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+  }
+
+  .buy-product-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .buy-product-icon {
+    width: 72px; height: 72px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    background: rgba(92,108,255,0.06);
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    flex-shrink: 0;
+  }
+
+  .buy-product-info { flex: 1; }
+  .buy-product-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .buy-product-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--indigo);
+    letter-spacing: 2px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .buy-plan-select {
+    margin-bottom: 32px;
+  }
+  .buy-plan-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .buy-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .buy-plan-option {
+    border: 1px solid var(--border2);
+    padding: 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .buy-plan-option.active {
+    border-color: var(--indigo);
+    background: rgba(92,108,255,0.08);
+  }
+  .buy-plan-option.active::before {
+    content: '✓';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 10px;
+    color: var(--indigo2);
+  }
+  .buy-plan-option:hover { border-color: var(--border); }
+  .buy-plan-duration {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .buy-plan-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
+    color: var(--indigo2);
+    margin-top: 4px;
+  }
+
+  .buy-summary {
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    padding: 24px;
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .buy-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    letter-spacing: 1px;
+  }
+  .buy-summary-row.total {
+    color: #fff;
+    font-size: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border2);
+  }
+  .buy-summary-row.total .price { color: var(--indigo2); }
+
+  .notice-box {
+    background: rgba(92,108,255,0.05);
+    border: 1px solid rgba(92,108,255,0.15);
+    padding: 16px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+  }
+  .notice-box::before {
+    content: '// ';
+    color: var(--indigo3);
+  }
+
+  .sellauth-note {
+    background: var(--card);
+    border: 1px solid rgba(92,108,255,0.2);
+    padding: 32px;
+    text-align: center;
+  }
+  .sellauth-note h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--indigo2);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .sellauth-note p {
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.7;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ABOUT / FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 2px; }
+  .faq-item {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    overflow: hidden;
+  }
+  .faq-q {
+    padding: 24px 28px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.2s;
+  }
+  .faq-q:hover { color: var(--indigo2); }
+  .faq-q::after {
+    content: '+';
+    font-size: 20px;
+    color: var(--indigo);
+    transition: transform 0.3s;
+  }
+  .faq-item.open .faq-q::after { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+    padding: 0 28px;
+  }
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding: 0 28px 24px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border2);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .footer-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #fff;
+  }
+  .footer-logo span { color: var(--indigo); }
+  .footer-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+  .footer-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .footer-links a:hover { color: var(--indigo2); }
+
+  /* UTILS */
+  .page-section {
+    padding: 80px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .text-center { text-align: center; }
+
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-60 { margin-top: 60px; }
+
+  /* FAQ PAGE */
+  .faq-page-wrap {
+    min-height: 100vh;
+    padding: 140px 48px 100px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .faq-page-category {
+    margin-bottom: 56px;
+  }
+  .faq-category-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--indigo);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .faq-category-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border2);
+  }
+
+  /* ===== HAMBURGER BUTTON ===== */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    z-index: 200;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    transition: all 0.25s;
+    transform-origin: center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ===== MOBILE DRAWER ===== */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: rgba(5,5,7,0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+    z-index: 150;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .mobile-drawer.open { max-height: 400px; }
+  .mobile-drawer ul {
+    list-style: none;
+    padding: 16px 0;
+  }
+  .mobile-drawer ul li a {
+    display: block;
+    padding: 16px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border2);
+    transition: color 0.2s, background 0.2s;
+  }
+  .mobile-drawer ul li:last-child a { border-bottom: none; }
+  .mobile-drawer ul li a:hover { color: var(--indigo2); background: rgba(92,108,255,0.04); }
+  .mobile-drawer .mobile-discord {
+    display: block;
+    margin: 16px 24px;
+    padding: 14px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--indigo2);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .mobile-drawer .mobile-discord:hover { background: var(--indigo); color: #fff; }
+
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-discord { display: none; }
+    .nav-hamburger { display: flex; }
+    .mobile-drawer { display: block; }
+
+    /* HERO */
+    .hero { min-height: 90vh; padding: 0 24px; }
+    .hero-title { font-size: clamp(52px, 18vw, 100px); }
+    .hero-subtitle { font-size: 13px; }
+    .hero-actions { flex-direction: column; gap: 12px; width: 100%; }
+    .hero-actions a { text-align: center; width: 100%; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; justify-content: center; }
+
+    /* SECTIONS */
+    section, .page-section, .products-page-hero, .buy-page-wrap { padding-left: 20px; padding-right: 20px; }
+
+    /* PRODUCTS GRID — single column */
+    .products-grid { grid-template-columns: 1fr; }
+    .products-full-grid { grid-template-columns: 1fr !important; }
+    .product-card { padding: 28px 24px; }
+    .product-card-full { padding: 28px 24px; }
+
+    /* PLAN CHIPS — wrap */
+    .product-plan-chips { flex-wrap: wrap; }
+    .plan-chip { flex: 1 1 calc(50% - 4px); text-align: center; }
+
+    /* BUY PAGE */
+    .buy-plan-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* FEATURES STRIP */
+    .features-strip { grid-template-columns: repeat(2, 1fr); }
+
+    /* FOOTER */
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-links { flex-direction: column; gap: 12px; align-items: center; }
+
+    /* MODAL */
+    .modal-overlay { padding: 16px; align-items: flex-end; }
+    .modal-box { border-radius: 16px 16px 0 0; max-height: 85vh; overflow-y: auto; }
+    .modal-hd { padding: 24px 20px 16px; }
+    .modal-bd { padding: 20px 20px 32px; }
+    .modal-prices { grid-template-columns: repeat(2, 1fr); }
+    .modal-acts { flex-direction: column; }
+
+    /* STATUS PAGE */
+    #status-page .status-grid { grid-template-columns: 1fr; }
+
+    /* FAQ */
+    .faq-page-wrap { padding: 100px 20px 80px; }
+
+    /* TICKER */
+    .ticker-wrap { display: none; }
+  }
+
+  /* ===== DETAILS MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.80);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+    padding: 24px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: #0d0d18;
+    border: 1px solid rgba(92,108,255,0.25);
+    border-radius: 16px;
+    max-width: 500px; width: 100%;
+    position: relative;
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.2s ease;
+    overflow: hidden;
+  }
+  .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+  .modal-top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, var(--indigo3), var(--indigo), var(--purple));
+  }
+  .modal-hd {
+    padding: 28px 28px 20px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(92,108,255,0.1);
+  }
+  .modal-ico {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    border: 1px solid rgba(92,108,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    background: rgba(92,108,255,0.08);
+    flex-shrink: 0;
+  }
+  .modal-ttl-grp { flex: 1; }
+  .modal-game-lbl {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--indigo); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .modal-prod-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px; font-weight: 700; color: #fff; letter-spacing: 1px;
+  }
+  .modal-x {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(92,108,255,0.15); background: transparent;
+    color: var(--text2); font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .modal-x:hover { border-color: rgba(92,108,255,0.4); color: #fff; background: rgba(92,108,255,0.12); }
+  .modal-bd { padding: 24px 28px 28px; }
+  .modal-desc-txt {
+    font-size: 13px; color: var(--text2); line-height: 1.75;
+    margin-bottom: 20px;
+    background: rgba(92,108,255,0.04);
+    border: 1px solid rgba(92,108,255,0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .modal-sec-lbl {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--indigo); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .modal-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .modal-feat {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--text2);
+    display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;
+  }
+  .modal-feat::before { content: '▸'; color: var(--indigo); font-size: 9px; }
+  .modal-prices {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 20px;
+  }
+  .modal-price-chip {
+    background: rgba(92,108,255,0.05);
+    border: 1px solid rgba(92,108,255,0.12);
+    border-radius: 10px;
+    padding: 10px 6px; text-align: center;
+  }
+  .modal-price-dur {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; color: var(--text3);
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .modal-price-amt {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px; font-weight: 700; color: var(--indigo2);
+  }
+  .modal-acts { display: flex; gap: 10px; margin-top: 4px; }
+  .modal-btn-close {
+    flex: 1; padding: 13px;
+    border-radius: 10px;
+    border: 1px solid rgba(92,108,255,0.18); background: transparent;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text2); text-decoration: none; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-btn-close:hover { border-color: rgba(92,108,255,0.35); color: var(--text); }
+  .modal-btn-buy {
+    flex: 2; padding: 13px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
+    border: none;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: #fff; text-decoration: none; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-btn-buy:hover { box-shadow: 0 0 20px rgba(92,108,255,0.45); }
+</style>
+</head>
+<body data-page="home">
+
+<!-- CURSOR -->
+
+<!-- ===================== NAV ===================== -->
+<nav>
+  <a href="#" class="nav-logo" onclick="return navTo('home');">KAI<span>RO</span></a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="return navTo('home');">Home</a></li>
+    <li><a href="#" onclick="return navTo('scroll-products');">Products</a></li>
+    <li><a href="#" onclick="return navTo('faq');">FAQ</a></li>
+    <li><a href="#" onclick="return navTo('products');">Shop</a></li>
+    <li><a href="#" onclick="return navTo('status');">Status</a></li>
+  </ul>
+  <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="nav-discord">⟡ Join Discord</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <ul>
+    <li><a href="#" onclick="mobileNav('home');">Home</a></li>
+    <li><a href="#" onclick="mobileNav('scroll-products');">Products</a></li>
+    <li><a href="#" onclick="mobileNav('faq');">FAQ</a></li>
+    <li><a href="#" onclick="mobileNav('products');">Shop</a></li>
+    <li><a href="#" onclick="mobileNav('status');">Status</a></li>
+  </ul>
+  <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="mobile-discord">⟡ Join Discord</a>
+</div>
+
+<!-- ===================== MAIN PAGE ===================== -->
+<div id="main-page" class="page active">
+
+  <!-- HERO -->
+  <div class="hero" id="home">
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
+    <div class="hero-badge">Premium Game Enhancements</div>
+    <h1 class="hero-title">
+      KAI<span class="glow-text" data-text="RO">RO</span>
+    </h1>
+    <p class="hero-subtitle">Undetected. Precise. Dominant.<br>The underground standard for competitive edge.</p>
+
+    <div class="hero-actions">
+      <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="btn-primary">⟡ Join Our Discord</a>
+      <a href="#" class="btn-ghost" onclick="event.preventDefault(); showPage('products');">Browse Products →</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">2.4K+</div>
+        <div class="stat-label">Customers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">99.9%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Support</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Detections</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ticker-item"><span>APEX LEGENDS</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>RUST</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>FORTNITE</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>KAIRO</span> EST. 2024 ✦ TRUSTED</div>
+      <div class="ticker-item"><span>INSTANT DELIVERY</span> VIA SELLAUTH ✦ AUTOMATED</div>
+      <div class="ticker-item"><span>0% BAN RATE</span> SINCE LAUNCH ✦ VERIFIED</div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item"><span>APEX LEGENDS</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>RUST</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>FORTNITE</span> UNDETECTED ✦ ACTIVE</div>
+      <div class="ticker-item"><span>KAIRO</span> EST. 2024 ✦ TRUSTED</div>
+      <div class="ticker-item"><span>INSTANT DELIVERY</span> VIA SELLAUTH ✦ AUTOMATED</div>
+      <div class="ticker-item"><span>0% BAN RATE</span> SINCE LAUNCH ✦ VERIFIED</div>
+    </div>
+  </div>
+
+  <!-- FEATURES STRIP -->
+  <div style="max-width:1400px;margin:80px auto 0;padding:0 48px;">
+    <div class="features-strip">
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Instant Delivery</div>
+        <div class="feature-text">Keys delivered instantly via SellAuth automated system</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Undetected</div>
+        <div class="feature-text">Constantly updated to stay ahead of anti-cheat systems</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡</div>
+        <div class="feature-title">Secure Purchase</div>
+        <div class="feature-text">Encrypted checkout with multiple payment methods</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">24/7 Support</div>
+        <div class="feature-text">Discord support team available around the clock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT SHOWCASE -->
+  <section id="section-products">
+    <div class="section-label">Product Showcase</div>
+    <h2 class="section-title">Our <em>Arsenal</em></h2>
+
+    <div class="products-grid">
+
+      <!-- APEX -->
+      <div class="product-card">
+        <div class="product-game-tag">Apex Legends</div>
+        <div class="product-icon">🎯</div>
+        <div class="product-name">APEX</div>
+        <div class="stock-badge in-stock" id="stock-apex">IN STOCK</div>
+        <div class="product-desc">Precision aimbot, ESP, and radar hack for Apex Legends. Full bone targeting, smoothing controls, and recoil correction.</div>
+        <div class="product-features">
+          <div class="feature">Bone Aimbot + FOV Circle</div>
+          <div class="feature">Player & Item ESP</div>
+          <div class="feature">No Recoil / Spread</div>
+          <div class="feature">Radar Hack</div>
+        </div>
+        <div class="product-price-row">
+          <div class="product-price">$3.99 <span>/ day</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('apex')">Buy Now →</a>
+          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('apex')">View Details</a>
+        </div>
+      </div>
+
+      <!-- RUST -->
+      <div class="product-card">
+        <div class="product-game-tag">Rust</div>
+        <div class="product-icon">🔧</div>
+        <div class="product-name">RUST</div>
+        <div class="stock-badge in-stock" id="stock-rust">IN STOCK</div>
+        <div class="product-desc">Advanced Rust external with no-recoil, esp, and aimbot. Mouse movement optimization for maximum accuracy.</div>
+        <div class="product-features">
+          <div class="feature">External</div>
+          <div class="feature">Player and World ESP</div>
+          <div class="feature">Exploits</div>
+          <div class="feature">Rapid Config</div>
+        </div>
+        <div class="product-price-row">
+          <div class="product-price">$4.99 <span>/ day</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('rust')">Buy Now →</a>
+          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('rust')">View Details</a>
+        </div>
+      </div>
+
+      <!-- FORTNITE -->
+      <div class="product-card">
+        <div class="product-game-tag">Fortnite</div>
+        <div class="product-icon">⚡</div>
+        <div class="product-name">FORTNITE</div>
+        <div class="stock-badge in-stock" id="stock-fortnite">IN STOCK</div>
+        <div class="product-desc">Fortnite enhancement with aimbot, ESP, and build prediction. Stay ahead with full loot tracking and player visibility.</div>
+        <div class="product-features">
+          <div class="feature">Aimbot + Build Assist</div>
+          <div class="feature">Player & Loot ESP</div>
+          <div class="feature">No Recoil</div>
+          <div class="feature">Speed hack</div>
+        </div>
+        <div class="product-price-row">
+          <div class="product-price">$4.99 <span>/ day</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
+          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('fortnite')">Buy Now →</a>
+          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('fortnite')">View Details</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-60">
+      <a href="#" class="btn-primary" onclick="event.preventDefault(); showPage('products');">View All Products & Plans →</a>
+    </div>
+  </section>
+
+  <section id="section-faq" style="padding-top:0;">
+    <div class="section-label">Common Questions</div>
+    <h2 class="section-title">FAQ</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is it detected? Will I get banned?</div>
+        <div class="faq-a">No. All of our products are fully undetected and have never triggered a ban wave. Our dev team monitors anti-cheat updates around the clock — the moment any patch drops, we push an update before detection windows open. We have thousands of active users across all titles with a 0% detection rate since launch.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How does delivery work?</div>
+        <div class="faq-a">After you complete your purchase through SellAuth, your license key is delivered instantly — either shown on-screen or sent to your email. No waiting, no manual steps, no support ticket needed. Copy the key, run the loader, and you're in.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I set it up after purchasing?</div>
+        <div class="faq-a">Once you have your key, download the KAIRO loader from the link provided after checkout. Disable your antivirus temporarily (false positive — our software is clean), run the loader as administrator, paste your key, and launch the game. Full setup guides are pinned in our Discord for each product.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept?</div>
+        <div class="faq-a">We accept all major credit and debit cards, cryptocurrency (Bitcoin, Ethereum, Litecoin, and more), and various regional payment methods — all handled securely through SellAuth's encrypted checkout. No accounts required to purchase.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What happens if the cheat goes down for an update?</div>
+        <div class="faq-a">If one of our products needs to go offline for an update — usually after a major game patch — your subscription is automatically paused and resumed once the update is live. You never lose time you paid for. Update windows are typically 2–24 hours depending on complexity.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is my personal information safe?</div>
+        <div class="faq-a">Yes. All transactions are handled by SellAuth which is PCI-compliant and uses industry-standard encryption. We do not store your payment details, and you can purchase anonymously with crypto if you prefer maximum privacy. We take your security as seriously as you do.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I get support?</div>
+        <div class="faq-a">Join our Discord server at discord.gg/dhHptTkB6D — our support team is online 24/7. Open a ticket in the #support channel and a team member will respond within minutes. Please have your order ID or key ready when you open a ticket.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</div>
+        <div class="faq-a">Due to the instant digital delivery nature of our products, we do not offer refunds once a key has been delivered and activated. If you experience any technical issues, please contact our support team on Discord before opening a dispute — we always make things right for legitimate issues.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div style="padding: 0 0 0 0; border-top: 1px solid var(--border2); margin: 0 48px;"></div>
+  <footer>
+    <div>
+      <div class="footer-logo">KAI<span>RO</span></div>
+      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
+    </div>
+    <div class="footer-text">FOR EDUCATIONAL PURPOSES ONLY</div>
+    <div class="footer-links">
+      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
+      <a href="#" onclick="event.preventDefault(); showPage('products');">Shop</a>
+      <a href="#" onclick="event.preventDefault(); showPage('faq');">FAQ</a>
+    </div>
+  </footer>
+
+<!-- ===== PRODUCT DETAILS MODAL ===== -->
+<div class="modal-overlay" id="detailsModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-top-bar"></div>
+    <div class="modal-hd">
+      <div class="modal-ico" id="m-icon"></div>
+      <div class="modal-ttl-grp">
+        <div class="modal-game-lbl" id="m-game"></div>
+        <div class="modal-prod-name" id="m-name"></div>
+      </div>
+      <button class="modal-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-bd">
+      <div class="modal-sec-lbl">// About</div>
+      <p class="modal-desc-txt" id="m-desc"></p>
+      <div class="modal-sec-lbl">// Key Features</div>
+      <div class="modal-feats" id="m-feats"></div>
+      <div class="modal-sec-lbl">// Pricing</div>
+      <div class="modal-prices" id="m-prices"></div>
+      <div class="modal-acts">
+        <a href="#" class="modal-btn-close" onclick="closeModal();return false;">Close</a>
+        <a href="#" class="modal-btn-buy" onclick="closeModal();showBuyPage(window._modalProd);return false;">Buy Now →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-page -->
+
+<!-- ===================== PRODUCTS PAGE ===================== -->
+<div id="products-page" class="page">
+
+  <div class="products-page-hero">
+    <div class="section-label">Full Catalog</div>
+    <h2 class="section-title">Choose Your <em>Edge</em></h2>
+
+    <div class="products-full-grid">
+
+      <!-- APEX FULL -->
+      <div class="product-card-full">
+        <div class="product-header">
+          <div>
+            <div class="product-game-tag">Apex Legends</div>
+            <div class="product-name" style="margin-top:8px;">APEX</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="product-icon">🎯</div>
+            <div class="stock-badge in-stock">IN STOCK</div>
+          </div>
+        </div>
+
+        <div class="buy-plan-label">Select Plan</div>
+        <div class="product-plan-chips">
+          <div class="plan-chip selected" onclick="selectPlan(this,'apex',3.99,'1 Day')">1 Day — $3.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'apex',14.99,'1 Week')">1 Week — $14.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'apex',29.99,'1 Month')">1 Month — $29.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'apex',149.99,'Lifetime')">Lifetime — $149.99</div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
+
+        <ul class="feature-list">
+          <li>Bone Aimbot with FOV Circle Control</li>
+          <li>Player & Item ESP</li>
+          <li>No Recoil / No Spread</li>
+          <li>Radar Hack & Minimap</li>
+          <li>Speed & Sensitivity Settings</li>
+          <li>Regular Updates & Patches</li>
+        </ul>
+        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('apex')">Buy Now — APEX →</a>
+      </div>
+
+      <!-- RUST FULL -->
+      <div class="product-card-full">
+        <div class="product-header">
+          <div>
+            <div class="product-game-tag">Rust</div>
+            <div class="product-name" style="margin-top:8px;">RUST</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="product-icon">🔧</div>
+            <div class="stock-badge in-stock">IN STOCK</div>
+          </div>
+        </div>
+
+        <div class="buy-plan-label">Select Plan</div>
+        <div class="product-plan-chips">
+          <div class="plan-chip selected" onclick="selectPlan(this,'rust',4.99,'1 Day')">1 Day — $4.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'rust',19.99,'1 Week')">1 Week — $19.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'rust',44.99,'1 Month')">1 Month — $44.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'rust',249.99,'Lifetime')">Lifetime — $249.99</div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
+
+        <ul class="feature-list">
+          <li>No Recoil Script (All Guns)</li>
+          <li>Auto-Click & Rapid Fire</li>
+          <li>Per-Gun Custom Profiles</li>
+          <li>HV Arrow / Crossbow Support</li>
+          <li>Low System Impact</li>
+          <li>Quick Setup & Config</li>
+        </ul>
+        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('rust')">Buy Now — RUST →</a>
+      </div>
+
+      <!-- FORTNITE FULL -->
+      <div class="product-card-full">
+        <div class="product-header">
+          <div>
+            <div class="product-game-tag">Fortnite</div>
+            <div class="product-name" style="margin-top:8px;">FORTNITE</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <div class="product-icon">⚡</div>
+            <div class="stock-badge in-stock">IN STOCK</div>
+          </div>
+        </div>
+
+        <div class="buy-plan-label">Select Plan</div>
+        <div class="product-plan-chips">
+          <div class="plan-chip selected" onclick="selectPlan(this,'fortnite',4.99,'1 Day')">1 Day — $4.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'fortnite',9.99,'3 Days')">3 Days — $9.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'fortnite',19.99,'1 Week')">1 Week — $19.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'fortnite',29.99,'1 Month')">1 Month — $29.99</div>
+          <div class="plan-chip" onclick="selectPlan(this,'fortnite',249.99,'Lifetime')">Lifetime — $249.99</div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
+
+        <ul class="feature-list">
+          <li>Aimbot with Build Assist</li>
+          <li>Player & Loot ESP</li>
+          <li>No Recoil</li>
+          <li>Speed Hack</li>
+          <li>Distance & Health Indicators</li>
+          <li>Zero Build & BR Mode Support</li>
+        </ul>
+        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('fortnite')">Buy Now — FORTNITE →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-section" style="padding-top:0;">
+    <div class="sellauth-note">
+      <h3>⟡ SELLAUTH CHECKOUT</h3>
+      <p>All purchases are processed securely through SellAuth.<br>
+      After payment, your license key is delivered instantly to your email.<br>
+      Keys are managed, stocked, and tracked automatically via SellAuth's platform.</p>
+    </div>
+  </div>
+
+  <footer style="max-width:1400px;margin:0 auto;padding:48px;">
+    <div>
+      <div class="footer-logo">KAI<span>RO</span></div>
+      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="return navTo('home');">Home</a>
+      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
+      <a href="#" onclick="return navTo('faq');">FAQ</a>
+    </div>
+  </footer>
+
+</div><!-- /products-page -->
+
+<!-- ===================== BUY PAGE ===================== -->
+<div id="buy-page" class="page">
+
+  <div class="buy-page-wrap">
+    <div class="section-label">Secure Checkout</div>
+    <h2 class="section-title" style="margin-bottom:0;">Complete Your <em>Order</em></h2>
+
+    <div class="buy-panel">
+      <div class="buy-product-header">
+        <div class="buy-product-icon" id="buy-icon">🎯</div>
+        <div class="buy-product-info">
+          <div class="buy-product-name" id="buy-name">APEX</div>
+          <div class="buy-product-subtitle" id="buy-game">Apex Legends</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="stock-badge in-stock">IN STOCK</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:8px;letter-spacing:1px;">INSTANT DELIVERY</div>
+        </div>
+      </div>
+
+      <div class="buy-plan-select">
+        <div class="buy-plan-label">Select Duration</div>
+        <div class="buy-plan-grid" id="buy-plan-grid">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <div class="buy-summary">
+        <div class="buy-summary-row">
+          <span>Product</span>
+          <span id="summary-product">APEX</span>
+        </div>
+        <div class="buy-summary-row">
+          <span>Duration</span>
+          <span id="summary-duration">1 Day</span>
+        </div>
+        <div class="buy-summary-row">
+          <span>Delivery</span>
+          <span style="color:var(--green);">INSTANT</span>
+        </div>
+        <div class="buy-summary-row total">
+          <span>Total</span>
+          <span class="price" id="summary-price">$14.99</span>
+        </div>
+      </div>
+
+      <div class="notice-box" style="margin-bottom:24px;">
+        You will be redirected to SellAuth's secure checkout. Your key is delivered instantly after payment. For support, join our Discord.
+      </div>
+
+      <!-- SellAuth embedded checkout -->
+      <button
+        type="button"
+        id="checkout-btn"
+        class="btn-card-primary"
+        style="font-size:15px;padding:18px;display:block;text-align:center;width:100%;border:none;cursor:pointer;"
+        onclick="window.sellAuthEmbed.checkout(this, {
+          cart: [{ productId: Number(this.dataset.productId), variantId: Number(this.dataset.variantId), quantity: 1 }],
+          shopId: SHOP_ID,
+          modal: true
+        })"
+      >
+        ⟡ Proceed to Checkout
+      </button>
+
+      <div style="text-align:center;margin-top:16px;">
+        <a href="#" onclick="event.preventDefault(); showPage('products');" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:2px;text-decoration:none;text-transform:uppercase;cursor:pointer;">← Back to Products</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border2);">
+      <div style="background:var(--card);padding:24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:8px;">🔒</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Secure</div>
+      </div>
+      <div style="background:var(--card);padding:24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:8px;">⚡</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Instant</div>
+      </div>
+      <div style="background:var(--card);padding:24px;text-align:center;">
+        <div style="font-size:20px;margin-bottom:8px;">💬</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Supported</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /buy-page -->
+
+<!-- ===================== FAQ PAGE ===================== -->
+<div id="faq-page" class="page">
+
+  <div class="faq-page-wrap">
+    <div class="section-label">Support & Info</div>
+    <h2 class="section-title" style="margin-bottom:48px;">Frequently Asked <em>Questions</em></h2>
+
+    <!-- CATEGORY: DETECTION & SAFETY -->
+    <div class="faq-page-category">
+      <div class="faq-category-label">Detection & Safety</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is KAIRO detected? Will I get banned?</div>
+          <div class="faq-a">No — all KAIRO products are fully undetected and have maintained a 0% ban rate since launch. Our internal security team monitors every anti-cheat update in real time across all titles. The moment a game patches or pushes a detection attempt, we push a counter-update before any detection window can open. We've been running since 2024 with thousands of active users and not a single ban wave has ever hit our software.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How does KAIRO stay undetected?</div>
+          <div class="faq-a">We use a combination of kernel-level driver spoofing, memory signature randomization, and process injection techniques that change on every session. Our loader generates a unique runtime signature each time it runs, meaning no two sessions look alike to anti-cheat scanners. We also have private testers running 24/7 on live accounts specifically to catch any detection before it reaches our users.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What anti-cheat systems do your products bypass?</div>
+          <div class="faq-a">Our products are tested and verified against Easy Anti-Cheat (EAC), BattleEye, Ricochet (Activision), and Vanguard (Riot). Each game product is developed specifically for that title's anti-cheat environment — we don't use generic cheat bases that get detected easily. Product-specific bypass methods are constantly refined.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What happens if the product goes offline for an update?</div>
+          <div class="faq-a">If we need to take a product offline for a patch — usually following a major game update — your subscription timer is automatically paused the moment we detect the issue and resumed the moment the update is live. You never lose paid time. Most update windows are resolved within 2 to 24 hours. You'll see the product marked as "Updating" in our Discord status channel during this window.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY: PURCHASING & DELIVERY -->
+    <div class="faq-page-category">
+      <div class="faq-category-label">Purchasing & Delivery</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How does purchasing work?</div>
+          <div class="faq-a">All purchases are processed through SellAuth, a trusted digital goods platform. Select your product and duration on our shop page, click Buy Now, and you'll be taken to SellAuth's secure checkout. After payment is confirmed, your unique license key is displayed on-screen and emailed to you instantly. No accounts required, no waiting periods, no manual steps.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</div>
+          <div class="faq-a">We accept all major credit and debit cards (Visa, Mastercard, Amex), PayPal, and a wide range of cryptocurrencies including Bitcoin, Ethereum, Litecoin, and Monero — all handled securely through SellAuth. Crypto purchases are fully anonymous and recommended if you want maximum privacy.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How fast is delivery after purchase?</div>
+          <div class="faq-a">Delivery is completely automated and instant. The moment your payment is confirmed by SellAuth, your license key is generated and displayed on-screen, and a copy is emailed to the address you provide at checkout. There is no manual review process — keys are available 24/7 including weekends and holidays.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I purchase anonymously?</div>
+          <div class="faq-a">Yes. Using cryptocurrency at checkout requires no personal information beyond a receiving wallet address. We recommend Monero (XMR) for maximum privacy as it's untraceable by design. You don't need to create an account on KAIRO or SellAuth to complete a purchase.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Do you offer refunds?</div>
+          <div class="faq-a">Due to the instant digital delivery nature of our products, we do not offer refunds once a key has been delivered and activated. That said, if you experience a genuine technical issue that our support team is unable to resolve within a reasonable timeframe, we will work something out. Please contact us on Discord before opening any payment dispute — we always aim to make things right for legitimate issues.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY: SETUP & USAGE -->
+    <div class="faq-page-category">
+      <div class="faq-category-label">Setup & Usage</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I set up the product after purchasing?</div>
+          <div class="faq-a">After receiving your key: (1) Download the KAIRO loader from the link provided post-purchase. (2) Temporarily disable your antivirus — the loader will trigger a false positive because of how it injects into memory, but it is clean. (3) Run the loader as Administrator. (4) Paste your license key when prompted. (5) Launch your game normally. Full step-by-step setup guides with screenshots are pinned in our Discord under #setup-guides for each product.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Why does my antivirus flag the loader?</div>
+          <div class="faq-a">This is a standard false positive that affects all game enhancement software. Our loader uses low-level memory operations that antivirus heuristics flag as suspicious — even though there is no malware present. You can verify the loader's safety by scanning it on VirusTotal if you'd like. Always download exclusively from our official Discord or post-purchase link to ensure you have the legitimate file.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Can I use my key on multiple PCs?</div>
+          <div class="faq-a">License keys are hardware-locked to a single machine at activation. If you need to transfer your key to a different PC, open a support ticket in our Discord and a team member can reset the HWID lock for you. We allow one HWID reset per key with no questions asked — additional resets may require verification.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">What are the system requirements?</div>
+          <div class="faq-a">All KAIRO products require Windows 10 or Windows 11 (64-bit). Secure Boot must be disabled in BIOS, and you'll need to run the loader as Administrator. Some products require TPM to be disabled as well — instructions are in the setup guide. We do not currently support Linux, macOS, or console platforms.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY: ACCOUNT & SUPPORT -->
+    <div class="faq-page-category">
+      <div class="faq-category-label">Support</div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I get support?</div>
+          <div class="faq-a">Join our Discord at discord.gg/dhHptTkB6D — our support team is active 24/7. Once you're in, open a ticket in the #open-ticket channel. Please have your order ID or license key ready when you do. Average response time is under 10 minutes during peak hours, and under 30 minutes overnight.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is my personal information safe?</div>
+          <div class="faq-a">Yes. All transactions are handled by SellAuth, which is PCI-DSS compliant and uses AES-256 encryption for all payment data. We never store your card details on our end. Your email is only used for key delivery. If you prefer zero data exposure, use crypto at checkout — no email required.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">I lost my key — can I recover it?</div>
+          <div class="faq-a">Yes. Your key is included in the confirmation email sent by SellAuth at the time of purchase. Check your spam folder if you can't find it. If you've lost access to that email or didn't receive one, open a support ticket on Discord with your order ID or proof of purchase and we'll retrieve it for you.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="sellauth-note" style="text-align:center;margin-top:20px;">
+      <h3>Still have questions?</h3>
+      <p style="margin:12px 0 24px;">Our team is live in Discord around the clock. Drop a ticket and we'll get back to you fast.</p>
+      <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="btn-primary" style="display:inline-block;">⟡ Join Our Discord</a>
+    </div>
+  </div>
+
+  <footer style="max-width:1400px;margin:0 auto;padding:48px;border-top:1px solid var(--border2);">
+    <div>
+      <div class="footer-logo">KAI<span>RO</span></div>
+      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="return navTo('home');">Home</a>
+      <a href="#" onclick="return navTo('products');">Shop</a>
+      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
+    </div>
+  </footer>
+
+</div><!-- /faq-page -->
+
+<!-- ===================== STATUS PAGE ===================== -->
+<div id="status-page" class="page">
+  <div style="max-width:860px;margin:0 auto;padding:120px 48px 120px;">
+
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--indigo);text-transform:uppercase;margin-bottom:16px;">// System Status</div>
+    <h2 style="font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;letter-spacing:2px;margin-bottom:12px;">Product Status</h2>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:48px;">Live status for all Kairo products. Updated after every patch or anti-cheat change.</p>
+
+    <!-- LEGEND -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:48px;">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Undetected</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ffc444;box-shadow:0 0 8px #ffc444;flex-shrink:0;"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Updating</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);flex-shrink:0;"></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Detected</span>
+      </div>
+    </div>
+
+    <!-- CARDS -->
+    <div style="display:flex;flex-direction:column;gap:2px;">
+
+      <!-- APEX -->
+      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">🎯</div>
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Apex Legends</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">APEX</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
+        </div>
+      </div>
+
+      <!-- RUST -->
+      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">🔧</div>
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Rust</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">RUST CHEAT</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
+        </div>
+      </div>
+
+      <!-- FORTNITE -->
+      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">⚡</div>
+          <div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Fortnite</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">FORTNITE</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NOTE -->
+    <div style="margin-top:48px;padding:20px 28px;border:1px solid var(--border2);border-left:3px solid var(--indigo);background:var(--card);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--text3);line-height:1.8;">
+      <span style="color:var(--indigo2);">⟡ NOTE —</span> If a product is detected we pull it immediately and push an update before relisting. Do not use any product marked as Detected or Updating. Join our <a href="https://discord.gg/dhHptTkB6D" target="_blank" style="color:var(--indigo2);text-decoration:none;">Discord</a> for real-time status alerts.
+    </div>
+
+  </div>
+
+  <footer style="max-width:860px;margin:0 auto;padding:32px 48px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;">
+    <div class="footer-logo">KAI<span>RO</span></div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);">© 2025 KAIRO. All rights reserved.</div>
+  </footer>
+
+</div><!-- /status-page -->
+
+<script>
+// ---- HAMBURGER MENU ----
+function toggleDrawer() {
+  var btn = document.getElementById('hamburger');
+  var drawer = document.getElementById('mobileDrawer');
+  btn.classList.toggle('open');
+  drawer.classList.toggle('open');
+}
+
+function closeDrawer() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileDrawer').classList.remove('open');
+}
+
+function mobileNav(dest) {
+  closeDrawer();
+  navTo(dest);
+  return false;
+}
+
+// ---- PAGE ROUTING ----
+function showPage(page) {
+  // support 'home' as alias for 'main'
+  var id = (page === 'home') ? 'main' : page;
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById(id + '-page');
+  if (target) target.classList.add('active');
+  document.body.setAttribute('data-page', page);
+  window.scrollTo(0, 0);
+}
+
+// Logo / Home nav link: go to main page, top
+function goHome() {
+  showPage('main');
+}
+
+// Products nav link: go to main page and scroll to product showcase
+function goProducts() {
+  var mainPage = document.getElementById('main-page');
+  if (mainPage.classList.contains('active')) {
+    document.getElementById('section-products').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    showPage('main');
+    setTimeout(function() {
+      document.getElementById('section-products').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+}
+
+// Central nav router used by all navTo() calls in HTML
+function navTo(dest) {
+  if (dest === 'home') {
+    showPage('main');
+  } else if (dest === 'scroll-products') {
+    goProducts();
+  } else if (dest === 'faq') {
+    showPage('faq');
+  } else if (dest === 'products') {
+    showPage('products');
+  } else if (dest === 'status') {
+    showPage('status');
+  }
+  return false;
+}
+
+const products = {
+  apex: {
+    name: 'APEX', game: 'Apex Legends', icon: '🎯',
+    slug: 'apex',
+    plans: [
+      { label: '1 Day',    price: 3.99,   productId: 830732, variantId: 1430729 },
+      { label: '1 Week',   price: 14.99,  productId: 830732, variantId: 1430730 },
+      { label: '1 Month',  price: 29.99,  productId: 830732, variantId: 1430731 },
+      { label: 'Lifetime', price: 149.99, productId: null, variantId: null, discordOnly: true }
+    ]
+  },
+  rust: {
+    name: 'RUST CHEAT', game: 'Rust', icon: '🔧',
+    slug: 'rust',
+    plans: [
+      { label: '1 Day',    price: 4.99,   productId: 830739, variantId: 1430746 },
+      { label: '1 Week',   price: 19.99,  productId: 830739, variantId: 1430747 },
+      { label: '1 Month',  price: 44.99,  productId: 830739, variantId: 1430748 },
+      { label: 'Lifetime', price: 249.99, productId: null, variantId: null, discordOnly: true }
+    ]
+  },
+  fortnite: {
+    name: 'FORTNITE', game: 'Fortnite', icon: '⚡',
+    slug: 'fortnite',
+    plans: [
+      { label: '1 Day',    price: 4.99,   productId: 830736, variantId: 1430740 },
+      { label: '3 Days',   price: 9.99,   productId: 830736, variantId: 1430740 },
+      { label: '1 Week',   price: 19.99,  productId: 830736, variantId: 1430742 },
+      { label: '1 Month',  price: 29.99,  productId: 830736, variantId: 1430743 },
+      { label: 'Lifetime', price: 249.99, productId: null, variantId: null, discordOnly: true }
+    ]
+  }
+};
+
+let currentProduct = null;
+let selectedPlanIndex = 0;
+
+function showBuyPage(productKey) {
+  currentProduct = productKey;
+  selectedPlanIndex = 0;
+  const p = products[productKey];
+
+  document.getElementById('buy-icon').textContent = p.icon;
+  document.getElementById('buy-name').textContent = p.name;
+  document.getElementById('buy-game').textContent = p.game;
+
+  renderBuyPlans(productKey);
+  updateBuySummary();
+  showPage('buy');
+}
+
+function renderBuyPlans(productKey) {
+  const p = products[productKey];
+  const grid = document.getElementById('buy-plan-grid');
+  grid.innerHTML = '';
+  p.plans.forEach((plan, i) => {
+    const div = document.createElement('div');
+    div.className = 'buy-plan-option' + (i === 0 ? ' active' : '');
+    div.innerHTML = `<div class="buy-plan-duration">${plan.label}</div><div class="buy-plan-price">$${plan.price.toFixed(2)}</div>`;
+    div.onclick = () => { selectBuyPlan(i); };
+    grid.appendChild(div);
+  });
+}
+
+function selectBuyPlan(index) {
+  selectedPlanIndex = index;
+  document.querySelectorAll('.buy-plan-option').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+  updateBuySummary();
+}
+
+function updateBuySummary() {
+  if (!currentProduct) return;
+  const p = products[currentProduct];
+  const plan = p.plans[selectedPlanIndex];
+
+  document.getElementById('summary-product').textContent = p.name;
+  document.getElementById('summary-duration').textContent = plan.label;
+  document.getElementById('summary-price').textContent = '$' + plan.price.toFixed(2);
+
+  const btn = document.getElementById('checkout-btn');
+  if (plan.discordOnly) {
+    btn.textContent = '⟡ Join Discord for Lifetime License';
+    btn.onclick = function(e) {
+      e.preventDefault();
+      window.open('https://discord.gg/dhHptTkB6D', '_blank');
+    };
+  } else {
+    btn.textContent = '⟡ Proceed to Checkout';
+    btn.onclick = function(e) {
+      e.preventDefault();
+      const p = products[currentProduct];
+      const url = 'https://kairoproducts.mysellauth.com/checkout-link?cart[0][productId]=' + plan.productId + '&cart[0][variantId]=' + plan.variantId + '&cart[0][quantity]=1';
+      window.open(url, '_blank');
+    };
+  }
+}
+
+// ---- FAQ ----
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// ---- PLAN CHIP SELECTOR (products page) ----
+function selectPlan(el, product, price, label) {
+  el.closest('.product-plan-chips').querySelectorAll('.plan-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ---- DETAILS MODAL ----
+var _mdata = {
+  apex: {
+    icon: '🎯', game: 'Apex Legends', name: 'APEX',
+    desc: 'Our most advanced Apex Legends suite. Precision aimbot with full bone selection, smooth aim curves, and a no-recoil system tuned specifically for Apex recoil patterns. Undetected since launch.',
+    features: ['Precision Aimbot — bone select, FOV, smooth', 'No Recoil — per-weapon profiles', 'ESP — player, distance, health bars', 'Loot ESP & item rarity filter', 'Radar overlay (2D minimap)', 'HWID-locked license, instant delivery']
+  },
+  rust: {
+    icon: '🔧', game: 'Rust', name: 'RUST',
+    desc: 'Full-featured external Rust cheat built for players who want a real edge. Complete no-recoil system with per-weapon profiles covering every gun in the game, automatic attachment detection, and smooth human-like mouse correction that bypasses behavioral anti-cheat. Includes a full ESP suite with player skeletons, distance, health bars, and item filters.',
+    features: ['No Recoil — per-weapon profiles, every gun', 'Auto attachment detection', 'Player ESP — skeletons, health, distance', 'Item & loot filters', 'External — zero game file modification', 'HWID-locked license, instant delivery']
+  },
+  fortnite: {
+    icon: '⚡', game: 'Fortnite', name: 'FORTNITE',
+    desc: 'Built for Fortnite build meta. Snap-to-target aimbot, edit-assist scripting, and full ESP. Kernel-level EAC bypass keeps you undetected even through Fortnite anti-cheat updates.',
+    features: ['Snap aimbot — head, body, or custom bone', 'No recoil and no spread', 'Player ESP — health, shield, distance', 'Chest and loot ESP', 'Edit-assist scripting', 'Kernel EAC bypass — undetected']
+  }
+};
+
+function showDetails(key) {
+  window._modalProd = key;
+  var d = _mdata[key];
+  var p = products[key];
+  document.getElementById('m-icon').textContent = d.icon;
+  document.getElementById('m-game').textContent = d.game;
+  document.getElementById('m-name').textContent = d.name;
+  document.getElementById('m-desc').textContent = d.desc;
+  var feats = document.getElementById('m-feats');
+  feats.innerHTML = '';
+  d.features.forEach(function(f) {
+    var el = document.createElement('div');
+    el.className = 'modal-feat';
+    el.textContent = f;
+    feats.appendChild(el);
+  });
+  var prices = document.getElementById('m-prices');
+  prices.innerHTML = '';
+  p.plans.forEach(function(plan) {
+    var chip = document.createElement('div');
+    chip.className = 'modal-price-chip';
+    chip.innerHTML = '<div class="modal-price-dur">' + plan.label + '</div><div class="modal-price-amt">$' + plan.price.toFixed(2) + '</div>';
+    prices.appendChild(chip);
+  });
+  document.getElementById('detailsModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detailsModal').classList.remove('open');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ---- HASH ROUTING ----
+var hashMap = {
+  '':        'home',
+  'home':    'home',
+  'shop':    'products',
+  'faq':     'faq',
+  'status':  'status'
+};
+
+function pageToHash(page) {
+  var map = { home: '', products: 'shop', faq: 'faq', status: 'status', buy: 'shop', main: '' };
+  return map[page] !== undefined ? map[page] : page;
+}
+
+// Override showPage to also update the URL hash
+var _originalShowPage = showPage;
+showPage = function(page) {
+  _originalShowPage(page);
+  var hash = pageToHash(page);
+  history.replaceState(null, '', hash ? '#' + hash : window.location.pathname);
+};
+
+// On load, read the hash and navigate to the right page
+function handleHashOnLoad() {
+  var hash = window.location.hash.replace('#', '').toLowerCase();
+  var page = hashMap[hash];
+  if (page && page !== 'home') {
+    _originalShowPage(page);
+  }
+}
+
+window.addEventListener('load', handleHashOnLoad);
+window.addEventListener('hashchange', function() {
+  var hash = window.location.hash.replace('#', '').toLowerCase();
+  var page = hashMap[hash];
+  if (page) _originalShowPage(page);
+});
+</script>
+</body>
+</html>
