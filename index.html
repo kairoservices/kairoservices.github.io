@@ -2,2301 +2,846 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KAIRO — Premium Game Enhancements</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Really Weird Assets ($RWA): Certificate No. 001, One (1) Cow</title>
+<meta name="description" content="Wall Street is tokenizing stocks, gold and treasuries. We tokenized a cow. $RWA is a Solana memecoin launching on pump.fun. Not backed by anything, including the cow.">
+<meta name="theme-color" content="#EFEBDA">
+<meta property="og:title" content="Really Weird Assets ($RWA)">
+<meta property="og:description" content="This certifies that the bearer is exposed to ONE (1) COW.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/rwa_pfp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="assets/rwa_banner.png">
+<link rel="icon" type="image/png" href="assets/rwa_pfp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@600;700&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050507;
-    --bg2: #0a0a10;
-    --bg3: #0f0f1a;
-    --card: #0d0d16;
-    --card2: #12121f;
-    --indigo: #5c6cff;
-    --indigo2: #7b89ff;
-    --indigo3: #3a4aee;
-    --purple: #9747ff;
-    --glow: rgba(92,108,255,0.18);
-    --glow2: rgba(92,108,255,0.06);
-    --border: rgba(92,108,255,0.18);
-    --border2: rgba(92,108,255,0.08);
-    --text: #e8e8f0;
-    --text2: #9090a8;
-    --text3: #5a5a72;
-    --green: #00ffaa;
-    --red: #ff4466;
+    --paper: #EFEBDA;
+    --paper-deep: #E6E1CB;
+    --ink: #1E5A45;
+    --ink-soft: rgba(30, 90, 69, 0.55);
+    --ink-faint: rgba(30, 90, 69, 0.22);
+    --red: #B23A2E;
+    --tag: #F4D35E;
+    --display: "Libre Caslon Text", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --engraved: "Cormorant Garamond", "Libre Caslon Text", Georgia, serif;
+    --body: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+    --mono: "Courier Prime", "Courier New", Courier, monospace;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Exo 2', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    cursor: default;
-  }
-
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.35;
-  }
-
-  /* SCANLINES */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none;
-    z-index: 9998;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 1000;
-    padding: 0 48px;
-    height: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(5,5,7,0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border2);
-  }
-
-  .nav-logo {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 8px;
-    color: #fff;
-    text-decoration: none;
-    position: relative;
-  }
-  .nav-logo span { color: var(--indigo); }
-  .nav-logo::after {
-    content: '';
-    position: absolute;
-    bottom: -2px; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, var(--indigo), transparent);
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 36px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: var(--text2);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--indigo2); }
-
-  .nav-discord {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--indigo2);
-    text-decoration: none;
-    text-transform: uppercase;
-    border: 1px solid var(--border);
-    padding: 8px 18px;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .nav-discord::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--indigo);
-    transform: translateX(-100%);
-    transition: transform 0.2s;
-    z-index: -1;
-  }
-  .nav-discord:hover { color: #fff; border-color: var(--indigo); }
-  .nav-discord:hover::before { transform: translateX(0); }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-    padding: 120px 48px 80px;
-    overflow: hidden;
-  }
-
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(92,108,255,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(92,108,255,0.06) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-  }
-
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-  }
-  .hero-orb-1 {
-    width: 600px; height: 400px;
-    background: radial-gradient(ellipse, rgba(92,108,255,0.15) 0%, transparent 70%);
-    top: 10%; left: 50%;
-    transform: translateX(-50%);
-    animation: pulse 6s ease-in-out infinite;
-  }
-  .hero-orb-2 {
-    width: 400px; height: 300px;
-    background: radial-gradient(ellipse, rgba(151,71,255,0.1) 0%, transparent 70%);
-    bottom: 20%; left: 20%;
-    animation: pulse 8s ease-in-out infinite 2s;
-  }
-  .hero-orb-3 {
-    width: 300px; height: 300px;
-    background: radial-gradient(ellipse, rgba(92,108,255,0.08) 0%, transparent 70%);
-    top: 30%; right: 15%;
-    animation: pulse 7s ease-in-out infinite 4s;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: translateX(0) scale(1); }
-    50% { opacity: 0.6; transform: translateX(0) scale(1.1); }
-  }
-
-  @keyframes statuspulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .hero-badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--indigo2);
-    text-transform: uppercase;
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: fadeUp 0.8s ease both;
-  }
-  .hero-badge::before, .hero-badge::after {
-    content: '';
-    width: 40px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--indigo));
-  }
-  .hero-badge::after { background: linear-gradient(90deg, var(--indigo), transparent); }
-
-  .hero-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(72px, 12vw, 140px);
-    font-weight: 700;
-    line-height: 0.9;
-    letter-spacing: -2px;
-    color: #fff;
-    animation: fadeUp 0.8s ease 0.1s both;
-    position: relative;
-  }
-  .hero-title .glow-text {
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(92,108,255,0.6);
-    position: relative;
-  }
-  .hero-title .glow-text::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0; top: 0;
-    color: var(--indigo2);
-    filter: blur(20px);
-    opacity: 0.5;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-    color: var(--text2);
-    letter-spacing: 2px;
-    margin-top: 28px;
-    font-weight: 300;
-    max-width: 480px;
-    line-height: 1.8;
-    animation: fadeUp 0.8s ease 0.2s both;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 48px;
-    animation: fadeUp 0.8s ease 0.3s both;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .btn-primary {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #fff;
-    text-decoration: none;
-    padding: 16px 40px;
-    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-  }
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--indigo2), var(--indigo));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .btn-primary:hover::before { opacity: 1; }
-  .btn-primary:hover { box-shadow: 0 0 30px rgba(92,108,255,0.5), 0 0 60px rgba(92,108,255,0.2); }
-
-  .btn-ghost {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--indigo2);
-    text-decoration: none;
-    padding: 15px 40px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-    background: transparent;
-  }
-  .btn-ghost:hover {
-    border-color: var(--indigo2);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(92,108,255,0.2);
-    background: rgba(92,108,255,0.08);
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 60px;
-    margin-top: 80px;
-    animation: fadeUp 0.8s ease 0.4s both;
-  }
-  .stat { text-align: center; }
-  .stat-num {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--indigo2);
-  }
-  .stat-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text3);
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* SECTION COMMON */
-  section {
-    padding: 120px 48px;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .section-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--indigo);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .section-label::before {
-    content: '//';
-    opacity: 0.5;
-  }
-
-  .section-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(36px, 5vw, 60px);
-    font-weight: 700;
-    letter-spacing: -1px;
-    color: #fff;
-    line-height: 1;
-    margin-bottom: 60px;
-  }
-  .section-title em {
-    font-style: normal;
-    color: var(--indigo2);
-  }
-
-  /* DIVIDER */
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-  }
-
-  /* PRODUCTS */
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2px;
-    background: var(--border2);
-    border: 1px solid var(--border2);
-  }
-
-  .product-card {
-    background: var(--card);
-    padding: 40px 36px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    cursor: pointer;
-  }
-  .product-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
-    transform: scaleX(0);
-    transition: transform 0.4s;
-  }
-  .product-card:hover { background: var(--card2); }
-  .product-card:hover::before { transform: scaleX(1); }
-
-  .product-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(92,108,255,0.06), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
-  .product-card:hover::after { opacity: 1; }
-
-  .product-game-tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--indigo);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .product-game-tag::before {
-    content: '';
-    width: 20px; height: 1px;
-    background: var(--indigo);
-  }
-
-  .product-icon {
-    width: 56px; height: 56px;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    background: rgba(92,108,255,0.05);
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  }
-
-  .product-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #fff;
-  }
-
-  .product-desc {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.7;
-    flex: 1;
-  }
-
-  .product-price-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-top: 8px;
-  }
-
-  .product-price {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--indigo2);
-  }
-  .product-price span {
-    font-size: 14px;
-    color: var(--text3);
-    font-weight: 400;
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 1px;
-  }
-
-  .stock-badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 4px 10px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .stock-badge.in-stock {
-    color: var(--green);
-    border: 1px solid rgba(0,255,170,0.25);
-    background: rgba(0,255,170,0.05);
-  }
-  .stock-badge.low-stock {
-    color: #ffaa00;
-    border: 1px solid rgba(255,170,0,0.25);
-    background: rgba(255,170,0,0.05);
-  }
-  .stock-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: blink 2s infinite;
-  }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-  .product-features {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px 0;
-    border-top: 1px solid var(--border2);
-    border-bottom: 1px solid var(--border2);
-  }
-  .feature {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    letter-spacing: 0.5px;
-  }
-  .feature::before {
-    content: '▸';
-    color: var(--indigo);
-    font-size: 9px;
-  }
-
-  .btn-card-primary {
-    display: block;
-    text-align: center;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #fff;
-    text-decoration: none;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-  }
-  .btn-card-primary:hover {
-    box-shadow: 0 0 24px rgba(92,108,255,0.5);
-  }
-  .btn-card-secondary {
-    display: block;
-    text-align: center;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text2);
-    text-decoration: none;
-    padding: 13px;
-    border: 1px solid var(--border2);
-    background: transparent;
-    transition: all 0.3s;
-    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-  }
-  .btn-card-secondary:hover { border-color: var(--border); color: var(--text); }
-
-  /* FEATURES STRIP */
-  .features-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border2);
-    border: 1px solid var(--border2);
-    margin: 0 0 160px;
-  }
-  .feature-item {
-    background: var(--card);
-    padding: 36px 28px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .feature-icon {
-    font-size: 28px;
-    margin-bottom: 4px;
-  }
-  .feature-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    color: #fff;
-    text-transform: uppercase;
-  }
-  .feature-text {
-    font-size: 12px;
-    color: var(--text3);
-    line-height: 1.6;
-  }
-
-  /* TICKER */
-  .ticker-wrap {
-    overflow: hidden;
-    border-top: 1px solid var(--border2);
-    border-bottom: 1px solid var(--border2);
-    background: var(--bg2);
-    padding: 16px 0;
-    margin: 0 -48px;
-  }
-  .ticker {
-    display: flex;
-    gap: 60px;
-    animation: tick 30s linear infinite;
-    width: max-content;
-  }
-  .ticker-item {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--text3);
-    text-transform: uppercase;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .ticker-item span { color: var(--indigo); }
-  @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-  /* ===================== PRODUCT PAGE ===================== */
-  .page { display: none; }
-  .page.active { display: block; }
-  #main-page.active, body[data-page="home"] #main-page { display: block; }
-  body[data-page="products"] #products-page { display: block; }
-  body[data-page="buy"] #buy-page { display: block; }
-  body[data-page="status"] #status-page { display: block; }
-
-  /* PRODUCTS FULL PAGE */
-  .products-page-hero {
-    padding: 160px 48px 80px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .products-full-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2px;
-    background: var(--border2);
-    border: 1px solid var(--border2);
-  }
-
-  .product-card-full {
-    background: var(--card);
-    padding: 48px 40px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-    cursor: pointer;
-  }
-  .product-card-full::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
-    transform: scaleX(0);
-    transition: transform 0.4s;
-  }
-  .product-card-full:hover { background: var(--card2); }
-  .product-card-full:hover::before { transform: scaleX(1); }
-
-  .product-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-
-  .product-plan-chips {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin: 20px 0;
-  }
-  .plan-chip {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 6px 14px;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    background: rgba(92,108,255,0.04);
-    text-transform: uppercase;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .plan-chip.selected, .plan-chip:hover {
-    border-color: var(--indigo2);
-    color: var(--indigo2);
-    background: rgba(92,108,255,0.1);
-  }
-
-  .plan-price-display {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 42px;
-    font-weight: 700;
-    color: var(--indigo2);
-    margin: 16px 0;
-  }
-  .plan-price-display sub {
-    font-size: 16px;
-    color: var(--text3);
-    font-weight: 400;
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  .feature-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 24px 0 32px;
-  }
-  .feature-list li {
-    font-size: 13px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 0.5px;
-  }
-  .feature-list li::before {
-    content: '✦';
-    color: var(--indigo);
-    font-size: 8px;
-    flex-shrink: 0;
-  }
-
-  /* BUY PAGE */
-  .buy-page-wrap {
-    min-height: 100vh;
-    padding: 120px 48px;
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-
-  .buy-panel {
-    background: var(--card);
-    border: 1px solid var(--border2);
-    padding: 48px;
-    position: relative;
-    overflow: hidden;
-  }
-  .buy-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--indigo), transparent);
-  }
-
-  .buy-product-header {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 40px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border2);
-  }
-
-  .buy-product-icon {
-    width: 72px; height: 72px;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    background: rgba(92,108,255,0.06);
-    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-    flex-shrink: 0;
-  }
-
-  .buy-product-info { flex: 1; }
-  .buy-product-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: #fff;
-  }
-  .buy-product-subtitle {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--indigo);
-    letter-spacing: 2px;
-    margin-top: 4px;
-    text-transform: uppercase;
-  }
-
-  .buy-plan-select {
-    margin-bottom: 32px;
-  }
-  .buy-plan-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--text3);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .buy-plan-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .buy-plan-option {
-    border: 1px solid var(--border2);
-    padding: 16px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-    background: transparent;
-    position: relative;
-    overflow: hidden;
-  }
-  .buy-plan-option.active {
-    border-color: var(--indigo);
-    background: rgba(92,108,255,0.08);
-  }
-  .buy-plan-option.active::before {
-    content: '✓';
-    position: absolute;
-    top: 6px; right: 8px;
-    font-size: 10px;
-    color: var(--indigo2);
-  }
-  .buy-plan-option:hover { border-color: var(--border); }
-  .buy-plan-duration {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    color: #fff;
-    text-transform: uppercase;
-  }
-  .buy-plan-price {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 18px;
-    color: var(--indigo2);
-    margin-top: 4px;
-  }
-
-  .buy-summary {
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    padding: 24px;
-    margin: 32px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .buy-summary-row {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: var(--text2);
-    letter-spacing: 1px;
-  }
-  .buy-summary-row.total {
-    color: #fff;
-    font-size: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border2);
-  }
-  .buy-summary-row.total .price { color: var(--indigo2); }
-
-  .notice-box {
-    background: rgba(92,108,255,0.05);
-    border: 1px solid rgba(92,108,255,0.15);
-    padding: 16px 20px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    line-height: 1.8;
-    letter-spacing: 0.5px;
-  }
-  .notice-box::before {
-    content: '// ';
-    color: var(--indigo3);
-  }
-
-  .sellauth-note {
-    background: var(--card);
-    border: 1px solid rgba(92,108,255,0.2);
-    padding: 32px;
-    text-align: center;
-  }
-  .sellauth-note h3 {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--indigo2);
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-  }
-  .sellauth-note p {
-    font-size: 13px;
-    color: var(--text3);
-    line-height: 1.7;
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  /* ABOUT / FAQ */
-  .faq-list { display: flex; flex-direction: column; gap: 2px; }
-  .faq-item {
-    background: var(--card);
-    border: 1px solid var(--border2);
-    overflow: hidden;
-  }
-  .faq-q {
-    padding: 24px 28px;
-    font-family: 'Rajdhani', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
     font-size: 17px;
-    font-weight: 600;
-    color: #fff;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: color 0.2s;
+    line-height: 1.6;
+    overflow-x: hidden;
   }
-  .faq-q:hover { color: var(--indigo2); }
-  .faq-q::after {
-    content: '+';
-    font-size: 20px;
-    color: var(--indigo);
-    transition: transform 0.3s;
+  /* paper grain, same turbulence as the brand SVGs */
+  .grain {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 50; mix-blend-mode: multiply; opacity: .5;
   }
-  .faq-item.open .faq-q::after { transform: rotate(45deg); }
-  .faq-a {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 1.8;
-    letter-spacing: 0.5px;
-    padding: 0 28px;
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 49;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(120, 105, 60, .16) 100%);
   }
-  .faq-item.open .faq-a {
-    max-height: 200px;
-    padding: 0 28px 24px;
-  }
+  a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--red); }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--paper); border: 1px solid var(--ink); padding: 6px 12px; z-index: 100; }
+  .skip:focus { top: 12px; }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border2);
-    padding: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1400px;
-    margin: 0 auto;
+  .sheet { max-width: 1180px; margin: 0 auto; padding: 28px 24px 0; position: relative; z-index: 1; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
+    border-bottom: 3px double var(--ink); padding-bottom: 8px; margin-bottom: 22px;
+    font-size: 14px;
   }
-  .footer-logo {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 6px;
-    color: #fff;
-  }
-  .footer-logo span { color: var(--indigo); }
-  .footer-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text3);
-    text-transform: uppercase;
-  }
-  .footer-links {
-    display: flex;
-    gap: 24px;
-  }
-  .footer-links a {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--text3);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 0.2s;
-    cursor: pointer;
-  }
-  .footer-links a:hover { color: var(--indigo2); }
+  .masthead .firm { font-family: var(--engraved); font-weight: 700; font-size: 22px; letter-spacing: .02em; }
+  .masthead nav { display: flex; gap: 18px; flex-wrap: wrap; }
+  .masthead nav a { text-decoration: none; border-bottom: 1px solid transparent; }
+  .masthead nav a:hover { border-bottom-color: currentColor; }
 
-  /* UTILS */
-  .page-section {
-    padding: 80px 48px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .text-center { text-align: center; }
-
-  .mt-8 { margin-top: 8px; }
-  .mt-16 { margin-top: 16px; }
-  .mt-32 { margin-top: 32px; }
-  .mt-60 { margin-top: 60px; }
-
-  /* FAQ PAGE */
-  .faq-page-wrap {
-    min-height: 100vh;
-    padding: 140px 48px 100px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .faq-page-category {
-    margin-bottom: 56px;
-  }
-  .faq-category-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--indigo);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .faq-category-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border2);
-  }
-
-  /* ===== HAMBURGER BUTTON ===== */
-  .nav-hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-    z-index: 200;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--text);
-    transition: all 0.25s;
-    transform-origin: center;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  /* ===== MOBILE DRAWER ===== */
-  .mobile-drawer {
-    display: none;
-    position: fixed;
-    top: 64px; left: 0; right: 0;
-    background: rgba(5,5,7,0.98);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border2);
-    z-index: 150;
-    padding: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  .mobile-drawer.open { max-height: 400px; }
-  .mobile-drawer ul {
-    list-style: none;
-    padding: 16px 0;
-  }
-  .mobile-drawer ul li a {
-    display: block;
-    padding: 16px 24px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--text2);
-    text-decoration: none;
-    border-bottom: 1px solid var(--border2);
-    transition: color 0.2s, background 0.2s;
-  }
-  .mobile-drawer ul li:last-child a { border-bottom: none; }
-  .mobile-drawer ul li a:hover { color: var(--indigo2); background: rgba(92,108,255,0.04); }
-  .mobile-drawer .mobile-discord {
-    display: block;
-    margin: 16px 24px;
-    padding: 14px;
-    text-align: center;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--indigo2);
-    text-decoration: none;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-  }
-  .mobile-drawer .mobile-discord:hover { background: var(--indigo); color: #fff; }
-
-  @media (max-width: 768px) {
-    /* NAV */
-    nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    .nav-discord { display: none; }
-    .nav-hamburger { display: flex; }
-    .mobile-drawer { display: block; }
-
-    /* HERO */
-    .hero { min-height: 90vh; padding: 0 24px; }
-    .hero-title { font-size: clamp(52px, 18vw, 100px); }
-    .hero-subtitle { font-size: 13px; }
-    .hero-actions { flex-direction: column; gap: 12px; width: 100%; }
-    .hero-actions a { text-align: center; width: 100%; }
-    .hero-stats { gap: 24px; flex-wrap: wrap; justify-content: center; }
-
-    /* SECTIONS */
-    section, .page-section, .products-page-hero, .buy-page-wrap { padding-left: 20px; padding-right: 20px; }
-
-    /* PRODUCTS GRID — single column */
-    .products-grid { grid-template-columns: 1fr; }
-    .products-full-grid { grid-template-columns: 1fr !important; }
-    .product-card { padding: 28px 24px; }
-    .product-card-full { padding: 28px 24px; }
-
-    /* PLAN CHIPS — wrap */
-    .product-plan-chips { flex-wrap: wrap; }
-    .plan-chip { flex: 1 1 calc(50% - 4px); text-align: center; }
-
-    /* BUY PAGE */
-    .buy-plan-grid { grid-template-columns: repeat(2, 1fr); }
-
-    /* FEATURES STRIP */
-    .features-strip { grid-template-columns: repeat(2, 1fr); }
-
-    /* FOOTER */
-    footer { flex-direction: column; gap: 20px; text-align: center; }
-    .footer-links { flex-direction: column; gap: 12px; align-items: center; }
-
-    /* MODAL */
-    .modal-overlay { padding: 16px; align-items: flex-end; }
-    .modal-box { border-radius: 16px 16px 0 0; max-height: 85vh; overflow-y: auto; }
-    .modal-hd { padding: 24px 20px 16px; }
-    .modal-bd { padding: 20px 20px 32px; }
-    .modal-prices { grid-template-columns: repeat(2, 1fr); }
-    .modal-acts { flex-direction: column; }
-
-    /* STATUS PAGE */
-    #status-page .status-grid { grid-template-columns: 1fr; }
-
-    /* FAQ */
-    .faq-page-wrap { padding: 100px 20px 80px; }
-
-    /* TICKER */
-    .ticker-wrap { display: none; }
-  }
-
-  /* ===== DETAILS MODAL ===== */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.80);
-    backdrop-filter: blur(10px);
-    z-index: 10000;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s ease;
-    padding: 24px;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal-box {
-    background: #0d0d18;
-    border: 1px solid rgba(92,108,255,0.25);
-    border-radius: 16px;
-    max-width: 500px; width: 100%;
+  /* ---------- certificate ---------- */
+  .cert {
     position: relative;
-    transform: translateY(16px) scale(0.98);
-    transition: transform 0.2s ease;
-    overflow: hidden;
+    background: var(--paper);
+    padding: 70px 76px 78px;
+    box-shadow: 0 1px 0 var(--ink-faint);
   }
-  .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-  .modal-top-bar {
-    height: 3px;
-    background: linear-gradient(90deg, var(--indigo3), var(--indigo), var(--purple));
+  .cert-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .cert-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 28px 40px;
+    align-items: center;
   }
-  .modal-hd {
-    padding: 28px 28px 20px;
-    display: flex; align-items: center; gap: 16px;
-    border-bottom: 1px solid rgba(92,108,255,0.1);
+  .cert-serial { font-family: var(--mono); font-weight: 700; color: var(--red); letter-spacing: .12em; font-size: 15px; }
+  .cert-serial.top { position: absolute; top: 52px; left: 78px; }
+  .cert-serial.bottom { position: absolute; bottom: 44px; right: 78px; }
+  .cert-kicker { font-family: var(--display); font-weight: 700; letter-spacing: .32em; font-size: clamp(15px, 1.9vw, 24px); }
+  .cert h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(40px, 6.4vw, 80px);
+    line-height: .98; letter-spacing: .005em; margin: 6px 0 22px;
   }
-  .modal-ico {
-    width: 52px; height: 52px;
-    border-radius: 12px;
-    border: 1px solid rgba(92,108,255,0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    background: rgba(92,108,255,0.08);
-    flex-shrink: 0;
+  .cert .certifies { font-style: italic; font-size: clamp(18px, 2vw, 25px); line-height: 1.35; }
+  .cert .amount { font-family: var(--display); font-weight: 700; letter-spacing: .1em; font-size: clamp(24px, 3vw, 36px); margin-top: 4px; }
+
+  .cert-no {
+    margin-top: 26px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 10px;
+    max-width: 560px;
   }
-  .modal-ttl-grp { flex: 1; }
-  .modal-game-lbl {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; letter-spacing: 3px;
-    color: var(--indigo); text-transform: uppercase; margin-bottom: 4px;
+  .cert-no .lbl { font-style: italic; font-size: 16px; white-space: nowrap; padding-bottom: 3px; }
+  .cert-no .val {
+    font-family: var(--mono); font-weight: 700; font-size: 14px; letter-spacing: .06em;
+    border-bottom: 1px solid var(--ink); padding: 0 2px 3px; min-width: 0;
+    overflow-wrap: anywhere; line-height: 1.4;
   }
-  .modal-prod-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 24px; font-weight: 700; color: #fff; letter-spacing: 1px;
+  .cert-no .val.pending { color: var(--red); }
+  .cert-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 24px; align-items: center; }
+
+  /* engraved panel buttons */
+  .panel-btn {
+    --fg: var(--paper); --bg: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 12px 26px;
+    font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: .04em;
+    color: var(--fg); background: var(--bg); text-decoration: none;
+    border: 1px solid var(--ink); border-radius: 0;
+    outline: 1px solid var(--ink); outline-offset: 3px;
+    background-image: repeating-linear-gradient(135deg, rgba(239,235,218,.09) 0 1px, transparent 1px 4px);
+    box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 4px rgba(239,235,218,.6);
+    cursor: pointer; transition: transform .08s ease, background-color .15s ease;
   }
-  .modal-x {
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    border: 1px solid rgba(92,108,255,0.15); background: transparent;
-    color: var(--text2); font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; flex-shrink: 0;
+  .panel-btn:hover { color: var(--fg); background-color: #174a38; }
+  .panel-btn:active { transform: translateY(1px); }
+  .panel-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+  .panel-btn.ghost {
+    --fg: var(--ink); --bg: var(--paper);
+    background-image: repeating-linear-gradient(135deg, rgba(30,90,69,.07) 0 1px, transparent 1px 4px);
+    box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--ink-soft);
   }
-  .modal-x:hover { border-color: rgba(92,108,255,0.4); color: #fff; background: rgba(92,108,255,0.12); }
-  .modal-bd { padding: 24px 28px 28px; }
-  .modal-desc-txt {
-    font-size: 13px; color: var(--text2); line-height: 1.75;
-    margin-bottom: 20px;
-    background: rgba(92,108,255,0.04);
-    border: 1px solid rgba(92,108,255,0.08);
-    border-radius: 10px;
-    padding: 14px 16px;
+  .panel-btn.ghost:hover { background-color: var(--paper-deep); color: var(--ink); }
+  .panel-btn.small { min-height: 44px; padding: 8px 16px; font-size: 15px; }
+  .panel-btn[disabled] {
+    cursor: not-allowed; color: var(--ink-soft);
+    background-image: none; background-color: transparent; outline-style: dashed;
+    box-shadow: none; border-style: dashed;
   }
-  .modal-sec-lbl {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; letter-spacing: 3px;
-    color: var(--indigo); text-transform: uppercase; margin-bottom: 10px;
+  .panel-btn[disabled]:active { transform: none; }
+
+  .cert-art { position: relative; justify-self: center; width: 100%; max-width: 400px; }
+  .cert-art svg.portrait { width: 100%; height: auto; display: block; }
+
+  .seal {
+    position: absolute; width: 132px; height: 132px; left: -40px; bottom: 4%;
+    transform: rotate(-14deg);
   }
-  .modal-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-  .modal-feat {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px; color: var(--text2);
-    display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px;
+  .seal svg { width: 100%; height: 100%; display: block; }
+  @keyframes stamp {
+    0% { opacity: 0; transform: rotate(-4deg) scale(2.4); }
+    55% { opacity: 1; transform: rotate(-16deg) scale(.94); }
+    75% { transform: rotate(-13deg) scale(1.03); }
+    100% { opacity: 1; transform: rotate(-14deg) scale(1); }
   }
-  .modal-feat::before { content: '▸'; color: var(--indigo); font-size: 9px; }
-  .modal-prices {
-    display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 20px;
+  @keyframes thud { 0%, 100% { transform: translate(0,0); } 30% { transform: translate(0,2px); } 60% { transform: translate(0,-1px); } }
+  .motion .seal { animation: stamp .55s cubic-bezier(.3,.7,.3,1) .7s both; }
+  .motion .cert { animation: thud .25s ease-out 1.02s both; }
+  @media (prefers-reduced-motion: reduce) {
+    .motion .seal, .motion .cert { animation: none; }
   }
-  .modal-price-chip {
-    background: rgba(92,108,255,0.05);
-    border: 1px solid rgba(92,108,255,0.12);
-    border-radius: 10px;
-    padding: 10px 6px; text-align: center;
+
+  .signatures {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; margin-top: 18px; padding: 0 4%;
   }
-  .modal-price-dur {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; letter-spacing: 2px; color: var(--text3);
-    text-transform: uppercase; margin-bottom: 6px;
+  .sig { text-align: center; font-size: 15px; }
+  .sig .scrawl { height: 44px; display: block; margin: 0 auto; width: 100%; max-width: 240px; }
+  .sig .line { border-top: 1px solid var(--ink); padding-top: 6px; }
+  .sig .who { font-weight: 700; }
+  .sig .role { font-style: italic; }
+
+  /* ---------- document body ---------- */
+  .doc { padding: 56px 0 0; }
+  .toc { max-width: 620px; margin: 0 auto 64px; }
+  .toc h2 { font-family: var(--engraved); font-weight: 700; font-size: 30px; text-align: center; margin-bottom: 10px; }
+  .toc ol { list-style: none; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 10px 0; }
+  .toc li a { display: flex; align-items: baseline; gap: 8px; text-decoration: none; padding: 6px 0; }
+  .toc li a:hover .t { text-decoration: underline; }
+  .toc .n { font-family: var(--display); min-width: 34px; }
+  .toc .dots { flex: 1; border-bottom: 1px dotted var(--ink-soft); transform: translateY(-4px); }
+  .toc .pg { font-style: italic; }
+
+  .article { padding: 40px 0 56px; border-top: 3px double var(--ink); }
+  .article-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 26px; flex-wrap: wrap; }
+  .article-head .sect { font-family: var(--display); font-size: 22px; }
+  .article-head h2 { font-family: var(--engraved); font-weight: 700; font-size: clamp(34px, 4.4vw, 50px); line-height: 1.05; }
+  .article-head .aside { margin-left: auto; font-style: italic; font-size: 15px; }
+  .lede { font-size: 19px; max-width: 760px; margin-bottom: 28px; }
+
+  .clauses { columns: 2; column-gap: 56px; column-rule: 1px solid var(--ink-faint); }
+  .clause { break-inside: avoid; margin-bottom: 22px; }
+  .clause h3 { font-family: var(--display); font-weight: 700; font-size: 20px; margin-bottom: 6px; }
+  .clause p { margin-bottom: 8px; text-align: justify; hyphens: auto; }
+  .clause p .no { font-family: var(--display); margin-right: 6px; }
+  .footnotes { margin-top: 18px; padding-top: 10px; border-top: 1px solid var(--ink); max-width: 480px; font-size: 14px; }
+  .footnotes p { margin-bottom: 4px; }
+  sup { font-size: .7em; line-height: 0; }
+
+  /* ledger */
+  .ledger { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .ledger caption { text-align: left; font-style: italic; margin-bottom: 10px; }
+  .ledger th, .ledger td { text-align: left; vertical-align: top; padding: 14px 14px 14px 0; border-bottom: 1px solid var(--ink-faint); }
+  .ledger thead th { font-family: var(--display); font-weight: 700; font-size: 14px; border-bottom: 2px solid var(--ink); letter-spacing: .04em; }
+  .ledger tbody tr:last-child td, .ledger tbody tr:last-child th { border-bottom: 2px solid var(--ink); }
+  .ledger .q { font-family: var(--engraved); font-weight: 700; font-size: 30px; line-height: 1; white-space: nowrap; }
+  .ledger .title { font-family: var(--display); font-weight: 700; }
+  .status { display: inline-block; font-family: var(--display); font-size: 13px; letter-spacing: .08em; padding: 3px 9px; border: 1px solid var(--ink-soft); white-space: nowrap; }
+  .status.current { color: var(--red); border: 2px solid var(--red); outline: 1px solid var(--red); outline-offset: 2px; transform: rotate(-4deg); font-weight: 700; }
+
+  /* tokenized */
+  .tok-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
+  .steps { list-style: none; counter-reset: s; }
+  .steps li { counter-increment: s; position: relative; padding-left: 44px; margin-bottom: 18px; }
+  .steps li::before {
+    content: "(" counter(s, lower-roman) ")";
+    position: absolute; left: 0; top: 0; font-family: var(--display); font-style: italic;
   }
-  .modal-price-amt {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 17px; font-weight: 700; color: var(--indigo2);
+  .hashtag { font-family: var(--display); font-weight: 700; }
+  .tickets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .ticket {
+    position: relative; padding: 14px 14px 12px; text-align: center;
+    background:
+      radial-gradient(circle at 0 50%, var(--paper) 7px, transparent 7.5px),
+      radial-gradient(circle at 100% 50%, var(--paper) 7px, transparent 7.5px),
+      var(--paper-deep);
+    border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
   }
-  .modal-acts { display: flex; gap: 10px; margin-top: 4px; }
-  .modal-btn-close {
-    flex: 1; padding: 13px;
-    border-radius: 10px;
-    border: 1px solid rgba(92,108,255,0.18); background: transparent;
-    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--text2); text-decoration: none; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
+  .ticket::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--ink-soft); pointer-events: none; }
+  .ticket .t-head { font-family: var(--display); font-size: 12px; letter-spacing: .12em; }
+  .ticket svg { width: 100%; max-width: 150px; height: auto; display: block; margin: 6px auto; }
+  .ticket .t-asset { font-family: var(--display); font-weight: 700; font-size: 15px; line-height: 1.25; }
+  .ticket .t-note { font-style: italic; font-size: 13px; line-height: 1.35; margin-top: 4px; }
+  .ticket .t-serial { font-family: var(--mono); font-weight: 700; color: var(--red); font-size: 13px; letter-spacing: .1em; margin-top: 8px; }
+
+  /* acquisition */
+  .acq { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 56px; }
+  .acq ol { list-style: none; counter-reset: a; }
+  .acq ol > li { counter-increment: a; display: grid; grid-template-columns: 44px 1fr; padding: 14px 0; border-bottom: 1px solid var(--ink-faint); }
+  .acq ol > li:first-child { border-top: 1px solid var(--ink); }
+  .acq ol > li:last-child { border-bottom: 1px solid var(--ink); }
+  .acq ol > li::before { content: counter(a) "."; font-family: var(--engraved); font-weight: 700; font-size: 28px; line-height: 1; }
+  .acq h3 { font-family: var(--display); font-weight: 700; font-size: 18px; }
+  .counter-panel { align-self: start; border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px; padding: 22px; margin: 5px; }
+  .counter-panel h3 { font-family: var(--engraved); font-size: 26px; margin-bottom: 6px; }
+  .counter-panel .cert-no { grid-template-columns: minmax(0, 1fr) auto; max-width: none; margin-top: 14px; }
+  .counter-panel .cert-no .lbl { grid-column: 1 / -1; }
+  .counter-panel .cert-actions { margin-top: 20px; }
+
+  /* ---------- back of certificate ---------- */
+  .back {
+    margin-top: 16px; background: var(--paper-deep); position: relative; z-index: 1;
+    border-top: 3px double var(--ink);
   }
-  .modal-btn-close:hover { border-color: rgba(92,108,255,0.35); color: var(--text); }
-  .modal-btn-buy {
-    flex: 2; padding: 13px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--indigo), var(--indigo3));
-    border: none;
-    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: #fff; text-decoration: none; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
+  .back-inner { max-width: 1180px; margin: 0 auto; padding: 34px 24px 40px; }
+  .microline { display: block; width: 100%; height: 10px; margin-bottom: 18px; }
+  .back h2 { font-family: var(--engraved); font-size: 26px; text-align: center; margin-bottom: 14px; }
+  .fine { columns: 2; column-gap: 40px; font-size: 13.5px; line-height: 1.55; }
+  .fine p { margin-bottom: 10px; text-align: justify; hyphens: auto; break-inside: avoid; }
+  .fine .verbatim { font-weight: 700; }
+  .back-links { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 18px; font-size: 15px; }
+  .back-links a { display: inline-block; padding: 10px 2px; }
+  .imprint { text-align: center; font-style: italic; font-size: 13px; margin-top: 10px; }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; z-index: 60;
+    transform: translate(-50%, 20px); opacity: 0; visibility: hidden;
+    background: var(--paper); color: var(--ink);
+    border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 3px;
+    padding: 12px 22px; font-family: var(--display); font-size: 15px;
+    transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
   }
-  .modal-btn-buy:hover { box-shadow: 0 0 20px rgba(92,108,255,0.45); }
+  .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity .18s ease, transform .18s ease; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .cert { padding: 64px 40px 40px; }
+    .cert-serial.top { left: 44px; top: 44px; }
+    .cert-serial.bottom { right: 44px; bottom: 24px; }
+    .cert-body { grid-template-columns: 1fr; text-align: center; }
+    .cert-art { order: -1; max-width: 300px; }
+    .cert-no { margin-left: auto; margin-right: auto; text-align: left; }
+    .cert-actions { justify-content: center; }
+    .seal { width: 108px; height: 108px; left: -18px; bottom: 0; }
+    .clauses { columns: 1; }
+    .tok-grid, .acq { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .sheet { padding: 16px 16px 0; }
+    .masthead { justify-content: center; text-align: center; }
+    .masthead nav { justify-content: center; gap: 4px 14px; font-size: 14px; }
+    .masthead nav a { padding: 6px 0; display: inline-block; }
+    .cert { padding: 58px 30px 64px; }
+    .cert-serial { font-size: 12px; }
+    .cert-serial.top { left: 50%; transform: translateX(-50%); top: 34px; }
+    .cert-serial.bottom { right: 50%; transform: translateX(50%); bottom: 34px; }
+    .cert-kicker { letter-spacing: .22em; }
+    .cert h1 { font-size: clamp(34px, 11vw, 48px); }
+    .cert-art { max-width: 230px; }
+    .seal { width: 88px; height: 88px; left: -26px; }
+    .cert-no { grid-template-columns: minmax(0, 1fr) auto; }
+    .cert-no .lbl { grid-column: 1 / -1; text-align: center; }
+    .panel-btn { width: 100%; }
+    .cert-no .panel-btn { width: auto; }
+    .signatures { grid-template-columns: 1fr; padding: 0; gap: 12px; }
+    .tickets { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
+    .ledger thead { display: none; }
+    .ledger, .ledger tbody, .ledger tr, .ledger td, .ledger th { display: block; width: 100%; }
+    .ledger tr { border-bottom: 1px solid var(--ink-faint); padding: 12px 0; }
+    .ledger th, .ledger td { border: 0; padding: 2px 0; }
+    .ledger tbody tr:last-child { border-bottom: 2px solid var(--ink); }
+    .ledger tbody tr:last-child td, .ledger tbody tr:last-child th { border: 0; }
+    .fine { columns: 1; }
+    .clause p, .fine p { text-align: left; }
+    .article-head .aside { margin-left: 0; }
+  }
 </style>
 </head>
-<body data-page="home">
+<body>
+<a class="skip" href="#prospectus">Skip to the prospectus</a>
 
-<!-- CURSOR -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hlines" width="4" height="3" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="1.5" x2="4" y2="1.5" stroke="#1E5A45" stroke-width=".55" opacity=".45"/>
+    </pattern>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#1E5A45" stroke-width="1.1"/>
+    </pattern>
+    <pattern id="hatchLight" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#1E5A45" stroke-width=".6" opacity=".5"/>
+    </pattern>
+    <pattern id="cross" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0V7M0 0H7" stroke="#1E5A45" stroke-width=".9" fill="none"/>
+    </pattern>
+    <filter id="grainF" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 .35  0 0 0 0 .32  0 0 0 0 .2  0 0 0 .22 0"/>
+    </filter>
+    <filter id="inkBleed"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+    <clipPath id="ovalClip"><ellipse cx="500" cy="470" rx="262" ry="297"/></clipPath>
+  </defs>
+</svg>
+<svg class="grain" aria-hidden="true" focusable="false"><rect width="100%" height="100%" filter="url(#grainF)"/></svg>
+<div class="vignette" aria-hidden="true"></div>
 
-<!-- ===================== NAV ===================== -->
-<nav>
-  <a href="#" class="nav-logo" onclick="return navTo('home');">KAI<span>RO</span></a>
-  <ul class="nav-links">
-    <li><a href="#" onclick="return navTo('home');">Home</a></li>
-    <li><a href="#" onclick="return navTo('scroll-products');">Products</a></li>
-    <li><a href="#" onclick="return navTo('faq');">FAQ</a></li>
-    <li><a href="#" onclick="return navTo('products');">Shop</a></li>
-    <li><a href="#" onclick="return navTo('status');">Status</a></li>
-  </ul>
-  <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="nav-discord">⟡ Join Discord</a>
-  <button class="nav-hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+<div class="sheet">
+  <header class="masthead">
+    <span class="firm">Really Weird Assets</span>
+    <nav aria-label="Sections">
+      <a href="#prospectus">Prospectus</a>
+      <a href="#reports">Quarterly Reports</a>
+      <a href="#tokenized">#Tokenized</a>
+      <a href="#acquire">Acquisition</a>
+      <a href="#fine-print">Fine Print</a>
+    </nav>
+  </header>
 
-<!-- MOBILE DRAWER -->
-<div class="mobile-drawer" id="mobileDrawer">
-  <ul>
-    <li><a href="#" onclick="mobileNav('home');">Home</a></li>
-    <li><a href="#" onclick="mobileNav('scroll-products');">Products</a></li>
-    <li><a href="#" onclick="mobileNav('faq');">FAQ</a></li>
-    <li><a href="#" onclick="mobileNav('products');">Shop</a></li>
-    <li><a href="#" onclick="mobileNav('status');">Status</a></li>
-  </ul>
-  <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="mobile-discord">⟡ Join Discord</a>
+  <main id="main">
+    <!-- ================= CERTIFICATE ================= -->
+    <section class="cert" id="certificate" aria-labelledby="cert-title">
+      <svg class="cert-frame" id="certFrame" aria-hidden="true" focusable="false"></svg>
+      <span class="cert-serial top" aria-hidden="true">RW 000001 A</span>
+      <span class="cert-serial bottom">RW 000001 A</span>
+
+      <div class="cert-body">
+        <div class="cert-text">
+          <p class="cert-kicker">CERTIFICATE OF</p>
+          <h1 id="cert-title">REALLY WEIRD ASSETS</h1>
+          <p class="certifies">This certifies that the bearer is exposed to</p>
+          <p class="amount">ONE (1) COW.</p>
+
+          <div class="cert-no">
+            <span class="lbl" id="caLabel">Certificate No.</span>
+            <span class="val pending" data-ca aria-labelledby="caLabel">TO BE ISSUED AT LAUNCH</span>
+            <button type="button" class="panel-btn ghost small" data-copy disabled aria-label="Copy certificate number (contract address)">Copy</button>
+          </div>
+
+          <div class="cert-actions">
+            <a class="panel-btn" data-pump href="https://pump.fun" target="_blank" rel="noopener">Buy $RWA on pump.fun</a>
+          </div>
+        </div>
+
+        <div class="cert-art">
+          <svg class="portrait" viewBox="150 80 700 780" role="img" aria-labelledby="bessieTitle">
+            <title id="bessieTitle">Bessie, Really Weird Asset No. 001: an engraved portrait of a cow in a suit and red tie, wearing a yellow barcode ear tag reading RWA-001, in an oval banknote frame.</title>
+            <g class="rope" data-rope></g>
+            <ellipse cx="500" cy="470" rx="318" ry="358" fill="#EFEBDA" stroke="#1E5A45" stroke-width="6"/>
+            <path id="arcTop" d="M218,470 A282,318 0 0 1 782,470" fill="none"/>
+            <path id="arcBot" d="M200,470 A300,340 0 0 0 800,470" fill="none"/>
+            <text font-family="Libre Caslon Text, Georgia, serif" font-weight="700" font-size="34" fill="#1E5A45" letter-spacing="5">
+              <textPath href="#arcTop" startOffset="50%" text-anchor="middle">REALLY WEIRD ASSETS</textPath>
+            </text>
+            <text font-family="Libre Caslon Text, Georgia, serif" font-weight="700" font-size="30" fill="#1E5A45" letter-spacing="5">
+              <textPath href="#arcBot" startOffset="50%" text-anchor="middle">ONE (1) COW</textPath>
+            </text>
+            <ellipse cx="500" cy="470" rx="265" ry="300" fill="#EFEBDA" stroke="#1E5A45" stroke-width="5"/>
+            <ellipse cx="500" cy="470" rx="263" ry="298" fill="url(#hlines)"/>
+            <g clip-path="url(#ovalClip)" stroke="#1E5A45" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
+              <!-- ears -->
+              <path d="M412,332 C365,308 305,312 292,334 C302,362 362,388 414,378 Z" fill="#EFEBDA"/>
+              <path d="M412,332 C365,308 305,312 292,334 C302,362 362,388 414,378 Z" fill="url(#hatch)" stroke="none"/>
+              <path d="M596,332 C645,312 704,312 718,330 C706,358 650,382 598,374 Z" fill="#EFEBDA"/>
+              <path d="M596,332 C645,312 704,312 718,330 C706,358 650,382 598,374 Z" fill="url(#hatch)" stroke="none"/>
+              <!-- horns -->
+              <path d="M425,272 C385,262 360,240 356,222 C374,246 398,256 432,258 Z" fill="#EFEBDA"/>
+              <path d="M580,274 C622,264 648,242 654,222 C636,246 612,258 574,260 Z" fill="#EFEBDA"/>
+              <!-- suit -->
+              <path d="M330,770 C340,690 400,650 468,630 L542,630 C610,650 670,690 680,770 Z" fill="#EFEBDA"/>
+              <path d="M330,770 C340,690 400,650 468,630 L542,630 C610,650 670,690 680,770 Z" fill="url(#cross)" stroke="none"/>
+              <path d="M466,600 L544,600 L546,636 L464,636 Z" fill="url(#hatchLight)"/>
+              <!-- collar -->
+              <path d="M466,630 L505,668 L488,694 L448,640 Z" fill="#EFEBDA"/>
+              <path d="M544,630 L505,668 L522,694 L562,640 Z" fill="#EFEBDA"/>
+              <!-- tie -->
+              <path d="M492,660 L518,660 L522,678 L488,678 Z" fill="#B23A2E"/>
+              <path d="M489,678 L521,678 L530,748 L505,776 L480,748 Z" fill="#B23A2E"/>
+              <!-- head -->
+              <path d="M424,272 C470,258 548,258 598,280 C610,350 606,450 582,522 L430,522 C405,450 400,345 424,272 Z" fill="#EFEBDA"/>
+              <!-- spots -->
+              <path d="M432,318 C446,298 500,298 511,328 C518,358 492,380 462,374 C440,370 427,346 432,318 Z" fill="url(#hatch)"/>
+              <ellipse cx="571" cy="467" rx="17" ry="31" transform="rotate(12 571 467)" fill="url(#hatch)"/>
+              <!-- eyes -->
+              <path d="M440,404 Q457,396 475,406" fill="none"/>
+              <path d="M534,406 Q552,396 570,404" fill="none"/>
+              <ellipse cx="457" cy="416" rx="12" ry="8.5" fill="#1E5A45" stroke="none"/>
+              <ellipse cx="552" cy="416" rx="12" ry="8.5" fill="#1E5A45" stroke="none"/>
+              <!-- muzzle -->
+              <ellipse cx="505" cy="556" rx="102" ry="58" fill="#EFEBDA"/>
+              <ellipse cx="505" cy="556" rx="102" ry="58" fill="url(#hatchLight)"/>
+              <ellipse cx="471" cy="556" rx="14" ry="10" fill="#1E5A45" stroke="none"/>
+              <ellipse cx="539" cy="556" rx="14" ry="10" fill="#1E5A45" stroke="none"/>
+              <path d="M470,592 Q505,604 541,590" fill="none"/>
+              <!-- ear tag -->
+              <g transform="rotate(-16 632 388)">
+                <rect x="600" y="364" width="64" height="48" rx="4" fill="#F4D35E"/>
+                <g stroke-width="1.6" stroke-linecap="butt">
+                  <path d="M609,372V396M613,372V396M616,372V396M621,372V396M624,372V396M628,372V396M633,372V396M636,372V396M641,372V396M645,372V396M648,372V396M653,372V396"/>
+                </g>
+                <text x="632" y="406" font-family="Courier Prime, Courier New, monospace" font-weight="700" font-size="9" fill="#1E5A45" stroke="none" text-anchor="middle">RWA-001</text>
+              </g>
+            </g>
+          </svg>
+
+          <div class="seal" aria-hidden="false">
+            <svg viewBox="0 0 200 200" role="img" aria-label="Red seal of Really Weird Assets, stamped $RWA">
+              <defs><path id="sealArc" d="M100,100 m-68,0 a68,68 0 1,1 136,0 a68,68 0 1,1 -136,0"/></defs>
+              <g filter="url(#inkBleed)" fill="none" stroke="#B23A2E">
+                <circle cx="100" cy="100" r="92" stroke-width="7"/>
+                <circle cx="100" cy="100" r="82" stroke-width="1.6"/>
+                <circle cx="100" cy="100" r="52" stroke-width="2"/>
+                <text fill="#B23A2E" stroke="none" font-family="Libre Caslon Text, Georgia, serif" font-size="13" font-weight="700" letter-spacing="3.2">
+                  <textPath href="#sealArc">REALLY WEIRD ASSETS · SEAL OF THE HERD ·</textPath>
+                </text>
+                <text x="100" y="112" text-anchor="middle" fill="#B23A2E" stroke="none" font-family="Libre Caslon Text, Georgia, serif" font-weight="700" font-size="30" transform="rotate(-8 100 100)">$RWA</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="signatures">
+          <div class="sig">
+            <svg class="scrawl" viewBox="0 0 240 44" aria-hidden="true"><path d="M16,34 C30,6 40,8 38,30 C36,40 50,14 62,22 C70,28 62,36 74,30 C92,20 96,8 104,16 C110,24 100,36 116,28 C130,20 142,26 150,24 C168,20 178,30 196,18 C204,12 214,16 226,14" fill="none" stroke="#1E5A45" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div class="line"><span class="who">Bessie</span>, <span class="role">Chief Executive Cow</span></div>
+          </div>
+          <div class="sig">
+            <svg class="scrawl" viewBox="0 0 240 44" aria-hidden="true"><path d="M20,30 C34,12 48,30 60,18 C70,10 76,34 90,26 C104,18 110,30 124,22 C140,12 150,32 166,24 C180,16 188,28 204,20 C212,16 220,22 228,18 M40,36 L200,34" fill="none" stroke="#1E5A45" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div class="line"><span class="who">The Herd</span>, <span class="role">Board of Directors</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="doc">
+      <!-- ================= CONTENTS ================= -->
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title">Contents</h2>
+        <ol>
+          <li><a href="#prospectus"><span class="n">I.</span><span class="t">Prospectus</span><span class="dots"></span><span class="pg">p. 2</span></a></li>
+          <li><a href="#reports"><span class="n">II.</span><span class="t">Quarterly Reports</span><span class="dots"></span><span class="pg">p. 3</span></a></li>
+          <li><a href="#tokenized"><span class="n">III.</span><span class="t">#Tokenized: Submissions for Asset No. 002</span><span class="dots"></span><span class="pg">p. 4</span></a></li>
+          <li><a href="#acquire"><span class="n">IV.</span><span class="t">Acquisition Instructions</span><span class="dots"></span><span class="pg">p. 5</span></a></li>
+          <li><a href="#fine-print"><span class="n">V.</span><span class="t">Fine Print (reverse of certificate)</span><span class="dots"></span><span class="pg">verso</span></a></li>
+        </ol>
+      </nav>
+
+      <!-- ================= PROSPECTUS ================= -->
+      <section class="article" id="prospectus" aria-labelledby="pros-title">
+        <div class="article-head">
+          <span class="sect">§ I.</span>
+          <h2 id="pros-title">Prospectus</h2>
+          <span class="aside">Offering of $RWA on the Solana network</span>
+        </div>
+        <p class="lede">Wall Street is tokenizing stocks, gold and treasuries. We tokenized a cow. The following clauses describe the Asset, what stands behind it, and what could go wrong. Please read them. The cow did not.</p>
+
+        <div class="clauses">
+          <div class="clause">
+            <h3>1. The Asset</h3>
+            <p><span class="no">1.1</span>The Asset is one (1) cow, hereinafter "Bessie."</p>
+            <p><span class="no">1.2</span>Bessie is designated Really Weird Asset No. 001 and wears ear tag RWA-001.<sup>†</sup> She also wears a suit, for reasons of corporate governance.</p>
+            <p><span class="no">1.3</span>Holders of $RWA are referred to as "Shareholders." Selling is referred to as "liquidating the herd." Upward price movement, if it ever occurs, is referred to as "asset appreciation." These are jokes, not terms of a contract.</p>
+          </div>
+          <div class="clause">
+            <h3>2. Backing</h3>
+            <p><span class="no">2.1</span>$RWA is backed by nothing. This includes the cow.</p>
+            <p><span class="no">2.2</span>Bessie is a drawing. Shareholders acquire no claim on any milk, hide, horn, pasture or moo, now or later.</p>
+            <p><span class="no">2.3</span>$RWA is a memecoin on Solana, issued through pump.fun under pump.fun's standard launch terms.<sup>‡</sup> Nothing in this document is an offer of a security.</p>
+          </div>
+          <div class="clause">
+            <h3>3. Risk Factors</h3>
+            <p><span class="no">3.1</span>The Asset is a cow. The Asset may moo.</p>
+            <p><span class="no">3.2</span>The Asset generates no yield. It generates methane.</p>
+            <p><span class="no">3.3</span>The price of $RWA can go to zero. The cow will not notice.</p>
+            <p><span class="no">3.4</span>Any Shareholder may liquidate the herd at any time. So may every other Shareholder, at the same time.</p>
+            <p><span class="no">3.5</span>The Company makes no promises. There is no roadmap to profit and no team that owes you anything.</p>
+            <p><span class="no">3.6</span>The Asset cannot read this prospectus and has not approved it.</p>
+          </div>
+        </div>
+        <div class="footnotes">
+          <p><sup>†</sup> The tag is yellow. It is the only yellow thing the Company owns.</p>
+          <p><sup>‡</sup> The Company did not negotiate these terms. The cow was not consulted.</p>
+        </div>
+      </section>
+
+      <!-- ================= QUARTERLY REPORTS ================= -->
+      <section class="article" id="reports" aria-labelledby="rep-title">
+        <div class="article-head">
+          <span class="sect">§ II.</span>
+          <h2 id="rep-title">Quarterly Reports</h2>
+          <span class="aside">Events, not returns</span>
+        </div>
+        <table class="ledger">
+          <caption>Schedule of corporate events. Quarters are in order, not on a calendar.</caption>
+          <thead><tr><th scope="col">Report</th><th scope="col">Event</th><th scope="col">Particulars</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="q">Q1</th><td class="title">IPO</td><td>$RWA launches on pump.fun. Certificate No. is issued and printed above.</td><td><span class="status current">CURRENT</span></td></tr>
+            <tr><th scope="row" class="q">Q2</th><td class="title">Listed</td><td>If the pump.fun bonding curve completes, the token graduates to open trading. This is a mechanism, not a forecast.</td><td><span class="status">Pending</span></td></tr>
+            <tr><th scope="row" class="q">Q3</th><td class="title">Asset No. 002 acquired</td><td>The Herd selects the best #Tokenized submission. It becomes Really Weird Asset No. 002 and gets its own certificate.</td><td><span class="status">Pending</span></td></tr>
+            <tr><th scope="row" class="q">Q4</th><td class="title">Bessie rings the bell</td><td>A ceremony. The bell is drawn. The cow is also drawn.</td><td><span class="status">Pending</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ================= TOKENIZED ================= -->
+      <section class="article" id="tokenized" aria-labelledby="tok-title">
+        <div class="article-head">
+          <span class="sect">§ III.</span>
+          <h2 id="tok-title">#Tokenized</h2>
+          <span class="aside">Submissions for Really Weird Asset No. 002</span>
+        </div>
+        <div class="tok-grid">
+          <div>
+            <p class="lede" style="font-size:18px">Anything can be a Really Weird Asset. It only needs a barcode tag.</p>
+            <ol class="steps">
+              <li>Put a barcode tag on any object. Paper, sticker, marker: all accepted.</li>
+              <li>Photograph the object with its tag visible.</li>
+              <li>Post the photograph with <span class="hashtag">#Tokenized</span><span data-x-mention></span>.</li>
+              <li>The Herd picks the best submission. It becomes Asset No. 002.</li>
+            </ol>
+          </div>
+          <div class="tickets" role="list" aria-label="Example submissions">
+            <article class="ticket" role="listitem">
+              <div class="t-head">SUBMISSION</div>
+              <svg viewBox="0 0 160 120" role="img" aria-label="Engraving of a traffic cone with a yellow barcode tag">
+                <g stroke="#1E5A45" stroke-width="2" stroke-linejoin="round">
+                  <path d="M40,104 L120,104 L114,112 L46,112 Z" fill="url(#cross)"/>
+                  <path d="M70,18 L90,18 L112,104 L48,104 Z" fill="#EFEBDA"/>
+                  <path d="M70,18 L90,18 L112,104 L48,104 Z" fill="url(#hatchLight)"/>
+                  <path d="M63,48 L97,48 L102,66 L58,66 Z" fill="#EFEBDA"/>
+                  <path d="M54,80 L106,80 L110,94 L50,94 Z" fill="url(#hatch)"/>
+                  <g transform="rotate(12 110 42)"><rect x="96" y="32" width="28" height="18" rx="2" fill="#F4D35E"/><path d="M100,36V46M103,36V46M105,36V46M108,36V46M112,36V46M114,36V46M117,36V46M120,36V46" stroke-width="1"/></g>
+                  <path d="M92,30 L100,36" fill="none" stroke-width="1"/>
+                </g>
+              </svg>
+              <div class="t-asset">ONE (1) TRAFFIC CONE</div>
+              <div class="t-note">Found. Declines to say where.</div>
+              <div class="t-serial">RW 000002 A</div>
+            </article>
+            <article class="ticket" role="listitem">
+              <div class="t-head">SUBMISSION</div>
+              <svg viewBox="0 0 160 120" role="img" aria-label="Engraving of a houseplant in a pot with a yellow barcode tag">
+                <g stroke="#1E5A45" stroke-width="2" stroke-linejoin="round">
+                  <path d="M80,70 C78,50 60,34 40,30 C52,46 62,60 80,70 Z" fill="url(#hatch)"/>
+                  <path d="M80,70 C84,46 104,28 126,26 C112,44 98,60 80,70 Z" fill="url(#hatch)"/>
+                  <path d="M80,70 C74,46 76,22 86,8 C92,30 90,52 80,70 Z" fill="#EFEBDA"/>
+                  <path d="M80,70 C74,46 76,22 86,8 C92,30 90,52 80,70 Z" fill="url(#hatchLight)"/>
+                  <path d="M80,70 C70,58 50,58 34,64 C50,72 66,74 80,70 Z" fill="#EFEBDA"/>
+                  <path d="M52,70 L108,70 L100,112 L60,112 Z" fill="#EFEBDA"/>
+                  <path d="M52,70 L108,70 L100,112 L60,112 Z" fill="url(#cross)"/>
+                  <rect x="48" y="68" width="64" height="10" fill="#EFEBDA"/>
+                  <g transform="rotate(-10 116 90)"><rect x="104" y="80" width="28" height="18" rx="2" fill="#F4D35E"/><path d="M108,84V94M111,84V94M113,84V94M116,84V94M120,84V94M122,84V94M125,84V94M128,84V94" stroke-width="1"/></g>
+                </g>
+              </svg>
+              <div class="t-asset">ONE (1) HOUSEPLANT</div>
+              <div class="t-note">Watered quarterly, like the reports.</div>
+              <div class="t-serial">RW 000003 A</div>
+            </article>
+            <article class="ticket" role="listitem">
+              <div class="t-head">SUBMISSION</div>
+              <svg viewBox="0 0 160 120" role="img" aria-label="Engraving of a floral couch with a yellow barcode tag">
+                <g stroke="#1E5A45" stroke-width="2" stroke-linejoin="round">
+                  <path d="M34,40 C34,28 126,28 126,40 L126,72 L34,72 Z" fill="#EFEBDA"/>
+                  <path d="M34,40 C34,28 126,28 126,40 L126,72 L34,72 Z" fill="url(#hatchLight)"/>
+                  <path d="M40,66 L120,66 L120,86 L40,86 Z" fill="#EFEBDA"/>
+                  <path d="M80,66 V86" fill="none"/>
+                  <path d="M18,56 C18,48 36,48 36,56 L36,94 L18,94 Z" fill="url(#cross)"/>
+                  <path d="M124,56 C124,48 142,48 142,56 L142,94 L124,94 Z" fill="url(#cross)"/>
+                  <path d="M20,94 L140,94" fill="none"/>
+                  <path d="M28,94 L26,106 M132,94 L134,106" fill="none"/>
+                  <g fill="none" stroke-width="1.2"><circle cx="58" cy="48" r="5"/><circle cx="80" cy="44" r="5"/><circle cx="102" cy="48" r="5"/><circle cx="60" cy="76" r="4"/><circle cx="100" cy="76" r="4"/></g>
+                  <g transform="rotate(8 130 36)"><rect x="118" y="26" width="28" height="18" rx="2" fill="#F4D35E"/><path d="M122,30V40M125,30V40M127,30V40M130,30V40M134,30V40M136,30V40M139,30V40M142,30V40" stroke-width="1"/></g>
+                </g>
+              </svg>
+              <div class="t-asset">GRANDMA'S COUCH</div>
+              <div class="t-note">Grandma has not been informed.</div>
+              <div class="t-serial">RW 000004 A</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ACQUISITION ================= -->
+      <section class="article" id="acquire" aria-labelledby="acq-title">
+        <div class="article-head">
+          <span class="sect">§ IV.</span>
+          <h2 id="acq-title">Acquisition Instructions</h2>
+          <span class="aside">For prospective Shareholders</span>
+        </div>
+        <div class="acq">
+          <ol>
+            <li><div><h3>Obtain a Solana wallet.</h3><p>Install <a href="https://phantom.com" target="_blank" rel="noopener">Phantom</a> or <a href="https://solflare.com" target="_blank" rel="noopener">Solflare</a>. Write down the recovery phrase on paper. Never share it with anyone, including cows.</p></div></li>
+            <li><div><h3>Deposit SOL.</h3><p>Buy SOL on an exchange, or inside the wallet, and send it to your wallet address. Keep a little extra for network fees.</p></div></li>
+            <li><div><h3>Locate the Asset.</h3><p>Open $RWA on pump.fun from the button on this page, or paste the Certificate No. into pump.fun search. Check that the address matches the one printed here.</p></div></li>
+            <li><div><h3>Swap.</h3><p>Choose an amount of SOL, swap it for $RWA and approve the transaction in your wallet. You are now exposed to one (1) cow.</p></div></li>
+          </ol>
+          <aside class="counter-panel" aria-labelledby="counter-title">
+            <h3 id="counter-title">Transfer Counter</h3>
+            <p>Use only the address below. Anything else claiming to be $RWA is not this cow.</p>
+            <div class="cert-no">
+              <span class="lbl" id="caLabel2">Certificate No.</span>
+              <span class="val pending" data-ca aria-labelledby="caLabel2">TO BE ISSUED AT LAUNCH</span>
+              <button type="button" class="panel-btn ghost small" data-copy disabled aria-label="Copy certificate number (contract address)">Copy</button>
+            </div>
+            <div class="cert-actions">
+              <a class="panel-btn" data-pump href="https://pump.fun" target="_blank" rel="noopener">Buy $RWA on pump.fun</a>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
 </div>
 
-<!-- ===================== MAIN PAGE ===================== -->
-<div id="main-page" class="page active">
-
-  <!-- HERO -->
-  <div class="hero" id="home">
-    <div class="hero-grid"></div>
-    <div class="hero-orb hero-orb-1"></div>
-    <div class="hero-orb hero-orb-2"></div>
-    <div class="hero-orb hero-orb-3"></div>
-
-    <div class="hero-badge">Premium Game Enhancements</div>
-    <h1 class="hero-title">
-      KAI<span class="glow-text" data-text="RO">RO</span>
-    </h1>
-    <p class="hero-subtitle">Undetected. Precise. Dominant.<br>The underground standard for competitive edge.</p>
-
-    <div class="hero-actions">
-      <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="btn-primary">⟡ Join Our Discord</a>
-      <a href="#" class="btn-ghost" onclick="event.preventDefault(); showPage('products');">Browse Products →</a>
+<!-- ================= BACK OF CERTIFICATE ================= -->
+<footer class="back" id="fine-print" aria-labelledby="fine-title">
+  <div class="back-inner">
+    <svg class="microline" aria-hidden="true" focusable="false" preserveAspectRatio="none"><text x="0" y="8" font-family="Courier Prime, monospace" font-size="6" fill="#1E5A45" data-micro>REALLYWEIRDASSETS</text></svg>
+    <h2 id="fine-title">Terms Printed on the Reverse</h2>
+    <div class="fine">
+      <p class="verbatim">$RWA is a memecoin made for fun. It is not a real-world asset, not a security, and is not backed by anything, including the cow. No roadmap to profit, no team promises. Crypto is risky and prices can go to zero. Only use money you can afford to lose.</p>
+      <p>Nothing on this page is financial, legal or tax advice, and nothing on it says or suggests that the price of $RWA will rise. Words such as "Shareholder," "prospectus," "certificate," "asset appreciation" and "liquidating the herd" are parody. They do not create shares, ownership, rights or obligations of any kind.</p>
+      <p>Always check the contract address against the Certificate No. printed on this page. Scam tokens copy names and pictures. No one from Really Weird Assets will ever message you first or ask for your recovery phrase.</p>
+      <p>Bessie is a fictional cow. Any resemblance to real cows, living or grazing, is coincidental. No animals were tokenized in the making of this certificate. The Herd votes on Asset No. 002 by being loud on the internet; results are not binding and nothing is owed to the winner.</p>
     </div>
-
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">2.4K+</div>
-        <div class="stat-label">Customers</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">99.9%</div>
-        <div class="stat-label">Uptime</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">24/7</div>
-        <div class="stat-label">Support</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">0</div>
-        <div class="stat-label">Detections</div>
-      </div>
+    <div class="back-links">
+      <a data-link="xUrl" href="#">X (Twitter)</a>
+      <a data-link="telegramUrl" href="#">Telegram</a>
+      <a data-pump href="https://pump.fun" target="_blank" rel="noopener">pump.fun</a>
     </div>
+    <p class="imprint">Printed by the Really Weird Assets Bureau of Engraving and Mooing. Series 001.</p>
   </div>
+</footer>
 
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <div class="ticker">
-      <div class="ticker-item"><span>APEX LEGENDS</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>RUST</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>FORTNITE</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>KAIRO</span> EST. 2024 ✦ TRUSTED</div>
-      <div class="ticker-item"><span>INSTANT DELIVERY</span> VIA SELLAUTH ✦ AUTOMATED</div>
-      <div class="ticker-item"><span>0% BAN RATE</span> SINCE LAUNCH ✦ VERIFIED</div>
-      <!-- duplicate for seamless loop -->
-      <div class="ticker-item"><span>APEX LEGENDS</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>RUST</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>FORTNITE</span> UNDETECTED ✦ ACTIVE</div>
-      <div class="ticker-item"><span>KAIRO</span> EST. 2024 ✦ TRUSTED</div>
-      <div class="ticker-item"><span>INSTANT DELIVERY</span> VIA SELLAUTH ✦ AUTOMATED</div>
-      <div class="ticker-item"><span>0% BAN RATE</span> SINCE LAUNCH ✦ VERIFIED</div>
-    </div>
-  </div>
-
-  <!-- FEATURES STRIP -->
-  <div style="max-width:1400px;margin:80px auto 0;padding:0 48px;">
-    <div class="features-strip">
-      <div class="feature-item">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">Instant Delivery</div>
-        <div class="feature-text">Keys delivered instantly via SellAuth automated system</div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🔒</div>
-        <div class="feature-title">Undetected</div>
-        <div class="feature-text">Constantly updated to stay ahead of anti-cheat systems</div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🛡</div>
-        <div class="feature-title">Secure Purchase</div>
-        <div class="feature-text">Encrypted checkout with multiple payment methods</div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">💬</div>
-        <div class="feature-title">24/7 Support</div>
-        <div class="feature-text">Discord support team available around the clock</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PRODUCT SHOWCASE -->
-  <section id="section-products">
-    <div class="section-label">Product Showcase</div>
-    <h2 class="section-title">Our <em>Arsenal</em></h2>
-
-    <div class="products-grid">
-
-      <!-- APEX -->
-      <div class="product-card">
-        <div class="product-game-tag">Apex Legends</div>
-        <div class="product-icon">🎯</div>
-        <div class="product-name">APEX</div>
-        <div class="stock-badge in-stock" id="stock-apex">IN STOCK</div>
-        <div class="product-desc">Precision aimbot, ESP, and radar hack for Apex Legends. Full bone targeting, smoothing controls, and recoil correction.</div>
-        <div class="product-features">
-          <div class="feature">Bone Aimbot + FOV Circle</div>
-          <div class="feature">Player & Item ESP</div>
-          <div class="feature">No Recoil / Spread</div>
-          <div class="feature">Radar Hack</div>
-        </div>
-        <div class="product-price-row">
-          <div class="product-price">$3.99 <span>/ day</span></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
-          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('apex')">Buy Now →</a>
-          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('apex')">View Details</a>
-        </div>
-      </div>
-
-      <!-- RUST -->
-      <div class="product-card">
-        <div class="product-game-tag">Rust</div>
-        <div class="product-icon">🔧</div>
-        <div class="product-name">RUST</div>
-        <div class="stock-badge in-stock" id="stock-rust">IN STOCK</div>
-        <div class="product-desc">Advanced Rust external with no-recoil, esp, and aimbot. Mouse movement optimization for maximum accuracy.</div>
-        <div class="product-features">
-          <div class="feature">External</div>
-          <div class="feature">Player and World ESP</div>
-          <div class="feature">Exploits</div>
-          <div class="feature">Rapid Config</div>
-        </div>
-        <div class="product-price-row">
-          <div class="product-price">$4.99 <span>/ day</span></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
-          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('rust')">Buy Now →</a>
-          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('rust')">View Details</a>
-        </div>
-      </div>
-
-      <!-- FORTNITE -->
-      <div class="product-card">
-        <div class="product-game-tag">Fortnite</div>
-        <div class="product-icon">⚡</div>
-        <div class="product-name">FORTNITE</div>
-        <div class="stock-badge in-stock" id="stock-fortnite">IN STOCK</div>
-        <div class="product-desc">Fortnite enhancement with aimbot, ESP, and build prediction. Stay ahead with full loot tracking and player visibility.</div>
-        <div class="product-features">
-          <div class="feature">Aimbot + Build Assist</div>
-          <div class="feature">Player & Loot ESP</div>
-          <div class="feature">No Recoil</div>
-          <div class="feature">Speed hack</div>
-        </div>
-        <div class="product-price-row">
-          <div class="product-price">$4.99 <span>/ day</span></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">
-          <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('fortnite')">Buy Now →</a>
-          <a href="#" class="btn-card-secondary" onclick="event.preventDefault(); showDetails('fortnite')">View Details</a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="text-center mt-60">
-      <a href="#" class="btn-primary" onclick="event.preventDefault(); showPage('products');">View All Products & Plans →</a>
-    </div>
-  </section>
-
-  <section id="section-faq" style="padding-top:0;">
-    <div class="section-label">Common Questions</div>
-    <h2 class="section-title">FAQ</h2>
-
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is it detected? Will I get banned?</div>
-        <div class="faq-a">No. All of our products are fully undetected and have never triggered a ban wave. Our dev team monitors anti-cheat updates around the clock — the moment any patch drops, we push an update before detection windows open. We have thousands of active users across all titles with a 0% detection rate since launch.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How does delivery work?</div>
-        <div class="faq-a">After you complete your purchase through SellAuth, your license key is delivered instantly — either shown on-screen or sent to your email. No waiting, no manual steps, no support ticket needed. Copy the key, run the loader, and you're in.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How do I set it up after purchasing?</div>
-        <div class="faq-a">Once you have your key, download the KAIRO loader from the link provided after checkout. Disable your antivirus temporarily (false positive — our software is clean), run the loader as administrator, paste your key, and launch the game. Full setup guides are pinned in our Discord for each product.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept?</div>
-        <div class="faq-a">We accept all major credit and debit cards, cryptocurrency (Bitcoin, Ethereum, Litecoin, and more), and various regional payment methods — all handled securely through SellAuth's encrypted checkout. No accounts required to purchase.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What happens if the cheat goes down for an update?</div>
-        <div class="faq-a">If one of our products needs to go offline for an update — usually after a major game patch — your subscription is automatically paused and resumed once the update is live. You never lose time you paid for. Update windows are typically 2–24 hours depending on complexity.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is my personal information safe?</div>
-        <div class="faq-a">Yes. All transactions are handled by SellAuth which is PCI-compliant and uses industry-standard encryption. We do not store your payment details, and you can purchase anonymously with crypto if you prefer maximum privacy. We take your security as seriously as you do.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How do I get support?</div>
-        <div class="faq-a">Join our Discord server at discord.gg/dhHptTkB6D — our support team is online 24/7. Open a ticket in the #support channel and a team member will respond within minutes. Please have your order ID or key ready when you open a ticket.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Can I get a refund?</div>
-        <div class="faq-a">Due to the instant digital delivery nature of our products, we do not offer refunds once a key has been delivered and activated. If you experience any technical issues, please contact our support team on Discord before opening a dispute — we always make things right for legitimate issues.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <div style="padding: 0 0 0 0; border-top: 1px solid var(--border2); margin: 0 48px;"></div>
-  <footer>
-    <div>
-      <div class="footer-logo">KAI<span>RO</span></div>
-      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
-    </div>
-    <div class="footer-text">FOR EDUCATIONAL PURPOSES ONLY</div>
-    <div class="footer-links">
-      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
-      <a href="#" onclick="event.preventDefault(); showPage('products');">Shop</a>
-      <a href="#" onclick="event.preventDefault(); showPage('faq');">FAQ</a>
-    </div>
-  </footer>
-
-<!-- ===== PRODUCT DETAILS MODAL ===== -->
-<div class="modal-overlay" id="detailsModal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div class="modal-top-bar"></div>
-    <div class="modal-hd">
-      <div class="modal-ico" id="m-icon"></div>
-      <div class="modal-ttl-grp">
-        <div class="modal-game-lbl" id="m-game"></div>
-        <div class="modal-prod-name" id="m-name"></div>
-      </div>
-      <button class="modal-x" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-bd">
-      <div class="modal-sec-lbl">// About</div>
-      <p class="modal-desc-txt" id="m-desc"></p>
-      <div class="modal-sec-lbl">// Key Features</div>
-      <div class="modal-feats" id="m-feats"></div>
-      <div class="modal-sec-lbl">// Pricing</div>
-      <div class="modal-prices" id="m-prices"></div>
-      <div class="modal-acts">
-        <a href="#" class="modal-btn-close" onclick="closeModal();return false;">Close</a>
-        <a href="#" class="modal-btn-buy" onclick="closeModal();showBuyPage(window._modalProd);return false;">Buy Now →</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /main-page -->
-
-<!-- ===================== PRODUCTS PAGE ===================== -->
-<div id="products-page" class="page">
-
-  <div class="products-page-hero">
-    <div class="section-label">Full Catalog</div>
-    <h2 class="section-title">Choose Your <em>Edge</em></h2>
-
-    <div class="products-full-grid">
-
-      <!-- APEX FULL -->
-      <div class="product-card-full">
-        <div class="product-header">
-          <div>
-            <div class="product-game-tag">Apex Legends</div>
-            <div class="product-name" style="margin-top:8px;">APEX</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-            <div class="product-icon">🎯</div>
-            <div class="stock-badge in-stock">IN STOCK</div>
-          </div>
-        </div>
-
-        <div class="buy-plan-label">Select Plan</div>
-        <div class="product-plan-chips">
-          <div class="plan-chip selected" onclick="selectPlan(this,'apex',3.99,'1 Day')">1 Day — $3.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'apex',14.99,'1 Week')">1 Week — $14.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'apex',29.99,'1 Month')">1 Month — $29.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'apex',149.99,'Lifetime')">Lifetime — $149.99</div>
-        </div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
-
-        <ul class="feature-list">
-          <li>Bone Aimbot with FOV Circle Control</li>
-          <li>Player & Item ESP</li>
-          <li>No Recoil / No Spread</li>
-          <li>Radar Hack & Minimap</li>
-          <li>Speed & Sensitivity Settings</li>
-          <li>Regular Updates & Patches</li>
-        </ul>
-        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('apex')">Buy Now — APEX →</a>
-      </div>
-
-      <!-- RUST FULL -->
-      <div class="product-card-full">
-        <div class="product-header">
-          <div>
-            <div class="product-game-tag">Rust</div>
-            <div class="product-name" style="margin-top:8px;">RUST</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-            <div class="product-icon">🔧</div>
-            <div class="stock-badge in-stock">IN STOCK</div>
-          </div>
-        </div>
-
-        <div class="buy-plan-label">Select Plan</div>
-        <div class="product-plan-chips">
-          <div class="plan-chip selected" onclick="selectPlan(this,'rust',4.99,'1 Day')">1 Day — $4.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'rust',19.99,'1 Week')">1 Week — $19.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'rust',44.99,'1 Month')">1 Month — $44.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'rust',249.99,'Lifetime')">Lifetime — $249.99</div>
-        </div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
-
-        <ul class="feature-list">
-          <li>No Recoil Script (All Guns)</li>
-          <li>Auto-Click & Rapid Fire</li>
-          <li>Per-Gun Custom Profiles</li>
-          <li>HV Arrow / Crossbow Support</li>
-          <li>Low System Impact</li>
-          <li>Quick Setup & Config</li>
-        </ul>
-        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('rust')">Buy Now — RUST →</a>
-      </div>
-
-      <!-- FORTNITE FULL -->
-      <div class="product-card-full">
-        <div class="product-header">
-          <div>
-            <div class="product-game-tag">Fortnite</div>
-            <div class="product-name" style="margin-top:8px;">FORTNITE</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-            <div class="product-icon">⚡</div>
-            <div class="stock-badge in-stock">IN STOCK</div>
-          </div>
-        </div>
-
-        <div class="buy-plan-label">Select Plan</div>
-        <div class="product-plan-chips">
-          <div class="plan-chip selected" onclick="selectPlan(this,'fortnite',4.99,'1 Day')">1 Day — $4.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'fortnite',9.99,'3 Days')">3 Days — $9.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'fortnite',19.99,'1 Week')">1 Week — $19.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'fortnite',29.99,'1 Month')">1 Month — $29.99</div>
-          <div class="plan-chip" onclick="selectPlan(this,'fortnite',249.99,'Lifetime')">Lifetime — $249.99</div>
-        </div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--indigo);letter-spacing:2px;margin-bottom:16px;">⟡ LIFETIME LICENSES — DISCORD ONLY</div>
-
-        <ul class="feature-list">
-          <li>Aimbot with Build Assist</li>
-          <li>Player & Loot ESP</li>
-          <li>No Recoil</li>
-          <li>Speed Hack</li>
-          <li>Distance & Health Indicators</li>
-          <li>Zero Build & BR Mode Support</li>
-        </ul>
-        <a href="#" class="btn-card-primary" onclick="event.preventDefault(); showBuyPage('fortnite')">Buy Now — FORTNITE →</a>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="page-section" style="padding-top:0;">
-    <div class="sellauth-note">
-      <h3>⟡ SELLAUTH CHECKOUT</h3>
-      <p>All purchases are processed securely through SellAuth.<br>
-      After payment, your license key is delivered instantly to your email.<br>
-      Keys are managed, stocked, and tracked automatically via SellAuth's platform.</p>
-    </div>
-  </div>
-
-  <footer style="max-width:1400px;margin:0 auto;padding:48px;">
-    <div>
-      <div class="footer-logo">KAI<span>RO</span></div>
-      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
-    </div>
-    <div class="footer-links">
-      <a href="#" onclick="return navTo('home');">Home</a>
-      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
-      <a href="#" onclick="return navTo('faq');">FAQ</a>
-    </div>
-  </footer>
-
-</div><!-- /products-page -->
-
-<!-- ===================== BUY PAGE ===================== -->
-<div id="buy-page" class="page">
-
-  <div class="buy-page-wrap">
-    <div class="section-label">Secure Checkout</div>
-    <h2 class="section-title" style="margin-bottom:0;">Complete Your <em>Order</em></h2>
-
-    <div class="buy-panel">
-      <div class="buy-product-header">
-        <div class="buy-product-icon" id="buy-icon">🎯</div>
-        <div class="buy-product-info">
-          <div class="buy-product-name" id="buy-name">APEX</div>
-          <div class="buy-product-subtitle" id="buy-game">Apex Legends</div>
-        </div>
-        <div style="text-align:right;">
-          <div class="stock-badge in-stock">IN STOCK</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:8px;letter-spacing:1px;">INSTANT DELIVERY</div>
-        </div>
-      </div>
-
-      <div class="buy-plan-select">
-        <div class="buy-plan-label">Select Duration</div>
-        <div class="buy-plan-grid" id="buy-plan-grid">
-          <!-- filled by JS -->
-        </div>
-      </div>
-
-      <div class="buy-summary">
-        <div class="buy-summary-row">
-          <span>Product</span>
-          <span id="summary-product">APEX</span>
-        </div>
-        <div class="buy-summary-row">
-          <span>Duration</span>
-          <span id="summary-duration">1 Day</span>
-        </div>
-        <div class="buy-summary-row">
-          <span>Delivery</span>
-          <span style="color:var(--green);">INSTANT</span>
-        </div>
-        <div class="buy-summary-row total">
-          <span>Total</span>
-          <span class="price" id="summary-price">$14.99</span>
-        </div>
-      </div>
-
-      <div class="notice-box" style="margin-bottom:24px;">
-        You will be redirected to SellAuth's secure checkout. Your key is delivered instantly after payment. For support, join our Discord.
-      </div>
-
-      <!-- SellAuth embedded checkout -->
-      <button
-        type="button"
-        id="checkout-btn"
-        class="btn-card-primary"
-        style="font-size:15px;padding:18px;display:block;text-align:center;width:100%;border:none;cursor:pointer;"
-        onclick="window.sellAuthEmbed.checkout(this, {
-          cart: [{ productId: Number(this.dataset.productId), variantId: Number(this.dataset.variantId), quantity: 1 }],
-          shopId: SHOP_ID,
-          modal: true
-        })"
-      >
-        ⟡ Proceed to Checkout
-      </button>
-
-      <div style="text-align:center;margin-top:16px;">
-        <a href="#" onclick="event.preventDefault(); showPage('products');" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:2px;text-decoration:none;text-transform:uppercase;cursor:pointer;">← Back to Products</a>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border2);">
-      <div style="background:var(--card);padding:24px;text-align:center;">
-        <div style="font-size:20px;margin-bottom:8px;">🔒</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Secure</div>
-      </div>
-      <div style="background:var(--card);padding:24px;text-align:center;">
-        <div style="font-size:20px;margin-bottom:8px;">⚡</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Instant</div>
-      </div>
-      <div style="background:var(--card);padding:24px;text-align:center;">
-        <div style="font-size:20px;margin-bottom:8px;">💬</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;">Supported</div>
-      </div>
-    </div>
-
-  </div>
-</div><!-- /buy-page -->
-
-<!-- ===================== FAQ PAGE ===================== -->
-<div id="faq-page" class="page">
-
-  <div class="faq-page-wrap">
-    <div class="section-label">Support & Info</div>
-    <h2 class="section-title" style="margin-bottom:48px;">Frequently Asked <em>Questions</em></h2>
-
-    <!-- CATEGORY: DETECTION & SAFETY -->
-    <div class="faq-page-category">
-      <div class="faq-category-label">Detection & Safety</div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Is KAIRO detected? Will I get banned?</div>
-          <div class="faq-a">No — all KAIRO products are fully undetected and have maintained a 0% ban rate since launch. Our internal security team monitors every anti-cheat update in real time across all titles. The moment a game patches or pushes a detection attempt, we push a counter-update before any detection window can open. We've been running since 2024 with thousands of active users and not a single ban wave has ever hit our software.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">How does KAIRO stay undetected?</div>
-          <div class="faq-a">We use a combination of kernel-level driver spoofing, memory signature randomization, and process injection techniques that change on every session. Our loader generates a unique runtime signature each time it runs, meaning no two sessions look alike to anti-cheat scanners. We also have private testers running 24/7 on live accounts specifically to catch any detection before it reaches our users.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">What anti-cheat systems do your products bypass?</div>
-          <div class="faq-a">Our products are tested and verified against Easy Anti-Cheat (EAC), BattleEye, Ricochet (Activision), and Vanguard (Riot). Each game product is developed specifically for that title's anti-cheat environment — we don't use generic cheat bases that get detected easily. Product-specific bypass methods are constantly refined.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">What happens if the product goes offline for an update?</div>
-          <div class="faq-a">If we need to take a product offline for a patch — usually following a major game update — your subscription timer is automatically paused the moment we detect the issue and resumed the moment the update is live. You never lose paid time. Most update windows are resolved within 2 to 24 hours. You'll see the product marked as "Updating" in our Discord status channel during this window.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CATEGORY: PURCHASING & DELIVERY -->
-    <div class="faq-page-category">
-      <div class="faq-category-label">Purchasing & Delivery</div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">How does purchasing work?</div>
-          <div class="faq-a">All purchases are processed through SellAuth, a trusted digital goods platform. Select your product and duration on our shop page, click Buy Now, and you'll be taken to SellAuth's secure checkout. After payment is confirmed, your unique license key is displayed on-screen and emailed to you instantly. No accounts required, no waiting periods, no manual steps.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</div>
-          <div class="faq-a">We accept all major credit and debit cards (Visa, Mastercard, Amex), PayPal, and a wide range of cryptocurrencies including Bitcoin, Ethereum, Litecoin, and Monero — all handled securely through SellAuth. Crypto purchases are fully anonymous and recommended if you want maximum privacy.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">How fast is delivery after purchase?</div>
-          <div class="faq-a">Delivery is completely automated and instant. The moment your payment is confirmed by SellAuth, your license key is generated and displayed on-screen, and a copy is emailed to the address you provide at checkout. There is no manual review process — keys are available 24/7 including weekends and holidays.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Can I purchase anonymously?</div>
-          <div class="faq-a">Yes. Using cryptocurrency at checkout requires no personal information beyond a receiving wallet address. We recommend Monero (XMR) for maximum privacy as it's untraceable by design. You don't need to create an account on KAIRO or SellAuth to complete a purchase.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Do you offer refunds?</div>
-          <div class="faq-a">Due to the instant digital delivery nature of our products, we do not offer refunds once a key has been delivered and activated. That said, if you experience a genuine technical issue that our support team is unable to resolve within a reasonable timeframe, we will work something out. Please contact us on Discord before opening any payment dispute — we always aim to make things right for legitimate issues.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CATEGORY: SETUP & USAGE -->
-    <div class="faq-page-category">
-      <div class="faq-category-label">Setup & Usage</div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">How do I set up the product after purchasing?</div>
-          <div class="faq-a">After receiving your key: (1) Download the KAIRO loader from the link provided post-purchase. (2) Temporarily disable your antivirus — the loader will trigger a false positive because of how it injects into memory, but it is clean. (3) Run the loader as Administrator. (4) Paste your license key when prompted. (5) Launch your game normally. Full step-by-step setup guides with screenshots are pinned in our Discord under #setup-guides for each product.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Why does my antivirus flag the loader?</div>
-          <div class="faq-a">This is a standard false positive that affects all game enhancement software. Our loader uses low-level memory operations that antivirus heuristics flag as suspicious — even though there is no malware present. You can verify the loader's safety by scanning it on VirusTotal if you'd like. Always download exclusively from our official Discord or post-purchase link to ensure you have the legitimate file.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Can I use my key on multiple PCs?</div>
-          <div class="faq-a">License keys are hardware-locked to a single machine at activation. If you need to transfer your key to a different PC, open a support ticket in our Discord and a team member can reset the HWID lock for you. We allow one HWID reset per key with no questions asked — additional resets may require verification.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">What are the system requirements?</div>
-          <div class="faq-a">All KAIRO products require Windows 10 or Windows 11 (64-bit). Secure Boot must be disabled in BIOS, and you'll need to run the loader as Administrator. Some products require TPM to be disabled as well — instructions are in the setup guide. We do not currently support Linux, macOS, or console platforms.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CATEGORY: ACCOUNT & SUPPORT -->
-    <div class="faq-page-category">
-      <div class="faq-category-label">Support</div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">How do I get support?</div>
-          <div class="faq-a">Join our Discord at discord.gg/dhHptTkB6D — our support team is active 24/7. Once you're in, open a ticket in the #open-ticket channel. Please have your order ID or license key ready when you do. Average response time is under 10 minutes during peak hours, and under 30 minutes overnight.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Is my personal information safe?</div>
-          <div class="faq-a">Yes. All transactions are handled by SellAuth, which is PCI-DSS compliant and uses AES-256 encryption for all payment data. We never store your card details on our end. Your email is only used for key delivery. If you prefer zero data exposure, use crypto at checkout — no email required.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">I lost my key — can I recover it?</div>
-          <div class="faq-a">Yes. Your key is included in the confirmation email sent by SellAuth at the time of purchase. Check your spam folder if you can't find it. If you've lost access to that email or didn't receive one, open a support ticket on Discord with your order ID or proof of purchase and we'll retrieve it for you.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="sellauth-note" style="text-align:center;margin-top:20px;">
-      <h3>Still have questions?</h3>
-      <p style="margin:12px 0 24px;">Our team is live in Discord around the clock. Drop a ticket and we'll get back to you fast.</p>
-      <a href="https://discord.gg/dhHptTkB6D" target="_blank" class="btn-primary" style="display:inline-block;">⟡ Join Our Discord</a>
-    </div>
-  </div>
-
-  <footer style="max-width:1400px;margin:0 auto;padding:48px;border-top:1px solid var(--border2);">
-    <div>
-      <div class="footer-logo">KAI<span>RO</span></div>
-      <div class="footer-text mt-8">© 2025 KAIRO. All rights reserved.</div>
-    </div>
-    <div class="footer-links">
-      <a href="#" onclick="return navTo('home');">Home</a>
-      <a href="#" onclick="return navTo('products');">Shop</a>
-      <a href="https://discord.gg/dhHptTkB6D" target="_blank">Discord</a>
-    </div>
-  </footer>
-
-</div><!-- /faq-page -->
-
-<!-- ===================== STATUS PAGE ===================== -->
-<div id="status-page" class="page">
-  <div style="max-width:860px;margin:0 auto;padding:120px 48px 120px;">
-
-    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--indigo);text-transform:uppercase;margin-bottom:16px;">// System Status</div>
-    <h2 style="font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;letter-spacing:2px;margin-bottom:12px;">Product Status</h2>
-    <p style="font-size:14px;color:var(--text2);margin-bottom:48px;">Live status for all Kairo products. Updated after every patch or anti-cheat change.</p>
-
-    <!-- LEGEND -->
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:48px;">
-      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
-        <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;"></div>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Undetected</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
-        <div style="width:10px;height:10px;border-radius:50%;background:#ffc444;box-shadow:0 0 8px #ffc444;flex-shrink:0;"></div>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Updating</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border2);padding:12px 20px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
-        <div style="width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);flex-shrink:0;"></div>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);">Detected</span>
-      </div>
-    </div>
-
-    <!-- CARDS -->
-    <div style="display:flex;flex-direction:column;gap:2px;">
-
-      <!-- APEX -->
-      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
-        <div style="display:flex;align-items:center;gap:20px;">
-          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">🎯</div>
-          <div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Apex Legends</div>
-            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">APEX</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
-        </div>
-      </div>
-
-      <!-- RUST -->
-      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
-        <div style="display:flex;align-items:center;gap:20px;">
-          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">🔧</div>
-          <div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Rust</div>
-            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">RUST CHEAT</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
-        </div>
-      </div>
-
-      <!-- FORTNITE -->
-      <div style="background:var(--card);border:1px solid var(--border2);border-left:3px solid var(--green);padding:28px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;">
-        <div style="display:flex;align-items:center;gap:20px;">
-          <div style="font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">⚡</div>
-          <div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--indigo);text-transform:uppercase;margin-bottom:6px;">Fortnite</div>
-            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">FORTNITE</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text3);">Last updated — August 10, 2025</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(0,255,170,0.2);background:rgba(0,255,170,0.05);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);">
-          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:statuspulse 2s infinite;"></div>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Undetected</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- NOTE -->
-    <div style="margin-top:48px;padding:20px 28px;border:1px solid var(--border2);border-left:3px solid var(--indigo);background:var(--card);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--text3);line-height:1.8;">
-      <span style="color:var(--indigo2);">⟡ NOTE —</span> If a product is detected we pull it immediately and push an update before relisting. Do not use any product marked as Detected or Updating. Join our <a href="https://discord.gg/dhHptTkB6D" target="_blank" style="color:var(--indigo2);text-decoration:none;">Discord</a> for real-time status alerts.
-    </div>
-
-  </div>
-
-  <footer style="max-width:860px;margin:0 auto;padding:32px 48px;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;">
-    <div class="footer-logo">KAI<span>RO</span></div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text3);">© 2025 KAIRO. All rights reserved.</div>
-  </footer>
-
-</div><!-- /status-page -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-// ---- HAMBURGER MENU ----
-function toggleDrawer() {
-  var btn = document.getElementById('hamburger');
-  var drawer = document.getElementById('mobileDrawer');
-  btn.classList.toggle('open');
-  drawer.classList.toggle('open');
-}
+  const CONFIG = {
+    contractAddress: "",            // e.g. "RWA...pump" — leave empty before launch
+    pumpUrl: "",                    // defaults to https://pump.fun/coin/<contractAddress>
+    xUrl: "",                       // e.g. "https://x.com/reallyweirdassets"
+    telegramUrl: ""                 // e.g. "https://t.me/reallyweirdassets"
+  };
 
-function closeDrawer() {
-  document.getElementById('hamburger').classList.remove('open');
-  document.getElementById('mobileDrawer').classList.remove('open');
-}
+  (function () {
+    const NS = "http://www.w3.org/2000/svg";
+    const INK = "#1E5A45";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce) document.documentElement.classList.add("motion");
 
-function mobileNav(dest) {
-  closeDrawer();
-  navTo(dest);
-  return false;
-}
+    /* ---------- config wiring ---------- */
+    const ca = (CONFIG.contractAddress || "").trim();
+    const pump = CONFIG.pumpUrl || (ca ? "https://pump.fun/coin/" + ca : "https://pump.fun");
+    document.querySelectorAll("[data-pump]").forEach(a => { a.href = pump; });
+    document.querySelectorAll("[data-ca]").forEach(el => {
+      if (ca) { el.textContent = ca; el.classList.remove("pending"); }
+    });
+    document.querySelectorAll("[data-copy]").forEach(btn => {
+      if (!ca) { btn.title = "Available at launch"; return; }
+      btn.disabled = false;
+      btn.addEventListener("click", () => copy(ca));
+    });
+    document.querySelectorAll("[data-link]").forEach(a => {
+      const url = CONFIG[a.dataset.link];
+      if (url) { a.href = url; a.target = "_blank"; a.rel = "noopener"; }
+      else a.remove();
+    });
+    if (CONFIG.xUrl) {
+      const handle = CONFIG.xUrl.replace(/\/+$/, "").split("/").pop();
+      const m = document.querySelector("[data-x-mention]");
+      if (handle && m) m.textContent = " and tag @" + handle;
+    }
 
-// ---- PAGE ROUTING ----
-function showPage(page) {
-  // support 'home' as alias for 'main'
-  var id = (page === 'home') ? 'main' : page;
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  var target = document.getElementById(id + '-page');
-  if (target) target.classList.add('active');
-  document.body.setAttribute('data-page', page);
-  window.scrollTo(0, 0);
-}
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+    function copy(text) {
+      const done = () => showToast("Certificate number copied.");
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, () => fallback(text) && done());
+      } else if (fallback(text)) done();
+    }
+    function fallback(text) {
+      const t = document.createElement("textarea");
+      t.value = text; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+      document.body.appendChild(t); t.select();
+      let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      t.remove(); return ok;
+    }
 
-// Logo / Home nav link: go to main page, top
-function goHome() {
-  showPage('main');
-}
+    /* ---------- guilloche helpers ---------- */
+    function el(name, attrs, parent) {
+      const n = document.createElementNS(NS, name);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(n);
+      return n;
+    }
+    function pathFrom(pts, close) {
+      let d = "M" + pts[0][0].toFixed(2) + "," + pts[0][1].toFixed(2);
+      for (let i = 1; i < pts.length; i++) d += "L" + pts[i][0].toFixed(2) + "," + pts[i][1].toFixed(2);
+      return d + (close ? "Z" : "");
+    }
+    // rope of phase-shifted waves around an ellipse
+    function ellipseRope(g, cx, cy, rx, ry, a, n, strands, sw, opacity) {
+      for (let s = 0; s < strands; s++) {
+        const ph = s / strands * Math.PI * 2;
+        const pts = [];
+        for (let i = 0; i <= 720; i++) {
+          const t = i / 720 * Math.PI * 2;
+          const off = a * Math.sin(n * t + ph);
+          pts.push([cx + (rx + off) * Math.cos(t), cy + (ry + off) * Math.sin(t)]);
+        }
+        el("path", { d: pathFrom(pts, true), fill: "none", stroke: INK, "stroke-width": sw, opacity: opacity }, g);
+      }
+    }
+    // straight guilloche band from (x1,y1) to (x2,y2)
+    function band(g, x1, y1, x2, y2, a, wave, strands, sw, opacity) {
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const ux = (x2 - x1) / len, uy = (y2 - y1) / len, nx = -uy, ny = ux;
+      const k = Math.max(1, Math.round(len / wave));
+      const step = 2;
+      for (let s = 0; s < strands; s++) {
+        const ph = s / strands * Math.PI * 2;
+        const pts = [];
+        for (let d = 0; d <= len; d += step) {
+          const t = d / len * k * Math.PI * 2;
+          const off = a * Math.sin(t + ph);
+          pts.push([x1 + ux * d + nx * off, y1 + uy * d + ny * off]);
+        }
+        el("path", { d: pathFrom(pts), fill: "none", stroke: INK, "stroke-width": sw, opacity: opacity }, g);
+      }
+    }
+    function microtext(g, x, y, w, size, rotate) {
+      const word = "REALLYWEIRDASSETS";
+      const count = Math.ceil(w / (size * 0.62 * word.length)) + 1;
+      const t = el("text", { x: x, y: y, "font-family": "Courier Prime, Courier New, monospace", "font-size": size, fill: INK, opacity: .75, textLength: w, lengthAdjust: "spacingAndGlyphs" }, g);
+      if (rotate) t.setAttribute("transform", rotate);
+      t.textContent = word.repeat(count);
+    }
 
-// Products nav link: go to main page and scroll to product showcase
-function goProducts() {
-  var mainPage = document.getElementById('main-page');
-  if (mainPage.classList.contains('active')) {
-    document.getElementById('section-products').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    showPage('main');
-    setTimeout(function() {
-      document.getElementById('section-products').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
-  }
-}
+    /* ---------- portrait rope + seal rosette ---------- */
+    document.querySelectorAll("[data-rope]").forEach(g => {
+      ellipseRope(g, 500, 470, 345, 386, 9, 64, 4, 1.1, .45);
+      ellipseRope(g, 500, 470, 338, 378, 5, 96, 3, .8, .35);
+    });
 
-// Central nav router used by all navTo() calls in HTML
-function navTo(dest) {
-  if (dest === 'home') {
-    showPage('main');
-  } else if (dest === 'scroll-products') {
-    goProducts();
-  } else if (dest === 'faq') {
-    showPage('faq');
-  } else if (dest === 'products') {
-    showPage('products');
-  } else if (dest === 'status') {
-    showPage('status');
-  }
-  return false;
-}
+    /* ---------- certificate frame ---------- */
+    const cert = document.getElementById("certificate");
+    const frame = document.getElementById("certFrame");
+    function drawFrame() {
+      const w = cert.clientWidth, h = cert.clientHeight;
+      if (!w || !h) return;
+      const small = w < 640;
+      frame.setAttribute("viewBox", "0 0 " + w + " " + h);
+      frame.innerHTML = "";
+      const g = el("g", {}, frame);
+      const o = 4;                         // outer rule inset
+      const b = small ? 12 : 16;           // band center inset
+      const amp = small ? 4 : 6;
+      const inner = small ? 22 : 30;       // inner rule inset
+      el("rect", { x: o, y: o, width: w - 2 * o, height: h - 2 * o, fill: "none", stroke: INK, "stroke-width": small ? 3 : 4 }, g);
+      el("rect", { x: o + 4, y: o + 4, width: w - 2 * o - 8, height: h - 2 * o - 8, fill: "none", stroke: INK, "stroke-width": .8 }, g);
+      const bg = el("g", {}, g);
+      band(bg, b, b, w - b, b, amp, 12, 4, .7, .55);
+      band(bg, b, h - b, w - b, h - b, amp, 12, 4, .7, .55);
+      band(bg, b, b, b, h - b, amp, 12, 4, .7, .55);
+      band(bg, w - b, b, w - b, h - b, amp, 12, 4, .7, .55);
+      el("rect", { x: inner, y: inner, width: w - 2 * inner, height: h - 2 * inner, fill: "none", stroke: INK, "stroke-width": 1.4 }, g);
+      // microtext rules just inside the inner rule
+      const ms = small ? 4.2 : 5;
+      microtext(g, inner + 30, inner + 8, w - 2 * inner - 60, ms);
+      microtext(g, inner + 30, h - inner - 3, w - 2 * inner - 60, ms);
+      if (!small) {
+        microtext(g, 0, 0, h - 2 * inner - 60, ms, "translate(" + (inner + 8) + "," + (h - inner - 30) + ") rotate(-90)");
+        microtext(g, 0, 0, h - 2 * inner - 60, ms, "translate(" + (w - inner - 8) + "," + (inner + 30) + ") rotate(90)");
+      }
+      // corner rosettes with numerals, as on the note
+      const cr = small ? 17 : 26;
+      [[inner, inner], [w - inner, inner], [inner, h - inner], [w - inner, h - inner]].forEach(([x, y]) => {
+        const c = el("g", {}, g);
+        el("circle", { cx: x, cy: y, r: cr + 4, fill: "#EFEBDA" }, c);
+        ellipseRope(c, x, y, cr * .78, cr * .78, cr * .2, 22, 5, .6, .8);
+        el("circle", { cx: x, cy: y, r: cr * .5, fill: "#EFEBDA" }, c);
+        const t = el("text", { x: x, y: y + cr * .24, "text-anchor": "middle", "font-family": "Libre Caslon Text, Georgia, serif", "font-weight": 700, "font-size": cr * .72, fill: INK }, c);
+        t.textContent = "1";
+      });
+    }
+    drawFrame();
+    let raf;
+    new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawFrame); }).observe(cert);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawFrame);
 
-const products = {
-  apex: {
-    name: 'APEX', game: 'Apex Legends', icon: '🎯',
-    slug: 'apex',
-    plans: [
-      { label: '1 Day',    price: 3.99,   productId: 830732, variantId: 1430729 },
-      { label: '1 Week',   price: 14.99,  productId: 830732, variantId: 1430730 },
-      { label: '1 Month',  price: 29.99,  productId: 830732, variantId: 1430731 },
-      { label: 'Lifetime', price: 149.99, productId: null, variantId: null, discordOnly: true }
-    ]
-  },
-  rust: {
-    name: 'RUST CHEAT', game: 'Rust', icon: '🔧',
-    slug: 'rust',
-    plans: [
-      { label: '1 Day',    price: 4.99,   productId: 830739, variantId: 1430746 },
-      { label: '1 Week',   price: 19.99,  productId: 830739, variantId: 1430747 },
-      { label: '1 Month',  price: 44.99,  productId: 830739, variantId: 1430748 },
-      { label: 'Lifetime', price: 249.99, productId: null, variantId: null, discordOnly: true }
-    ]
-  },
-  fortnite: {
-    name: 'FORTNITE', game: 'Fortnite', icon: '⚡',
-    slug: 'fortnite',
-    plans: [
-      { label: '1 Day',    price: 4.99,   productId: 830736, variantId: 1430740 },
-      { label: '3 Days',   price: 9.99,   productId: 830736, variantId: 1430740 },
-      { label: '1 Week',   price: 19.99,  productId: 830736, variantId: 1430742 },
-      { label: '1 Month',  price: 29.99,  productId: 830736, variantId: 1430743 },
-      { label: 'Lifetime', price: 249.99, productId: null, variantId: null, discordOnly: true }
-    ]
-  }
-};
-
-let currentProduct = null;
-let selectedPlanIndex = 0;
-
-function showBuyPage(productKey) {
-  currentProduct = productKey;
-  selectedPlanIndex = 0;
-  const p = products[productKey];
-
-  document.getElementById('buy-icon').textContent = p.icon;
-  document.getElementById('buy-name').textContent = p.name;
-  document.getElementById('buy-game').textContent = p.game;
-
-  renderBuyPlans(productKey);
-  updateBuySummary();
-  showPage('buy');
-}
-
-function renderBuyPlans(productKey) {
-  const p = products[productKey];
-  const grid = document.getElementById('buy-plan-grid');
-  grid.innerHTML = '';
-  p.plans.forEach((plan, i) => {
-    const div = document.createElement('div');
-    div.className = 'buy-plan-option' + (i === 0 ? ' active' : '');
-    div.innerHTML = `<div class="buy-plan-duration">${plan.label}</div><div class="buy-plan-price">$${plan.price.toFixed(2)}</div>`;
-    div.onclick = () => { selectBuyPlan(i); };
-    grid.appendChild(div);
-  });
-}
-
-function selectBuyPlan(index) {
-  selectedPlanIndex = index;
-  document.querySelectorAll('.buy-plan-option').forEach((el, i) => {
-    el.classList.toggle('active', i === index);
-  });
-  updateBuySummary();
-}
-
-function updateBuySummary() {
-  if (!currentProduct) return;
-  const p = products[currentProduct];
-  const plan = p.plans[selectedPlanIndex];
-
-  document.getElementById('summary-product').textContent = p.name;
-  document.getElementById('summary-duration').textContent = plan.label;
-  document.getElementById('summary-price').textContent = '$' + plan.price.toFixed(2);
-
-  const btn = document.getElementById('checkout-btn');
-  if (plan.discordOnly) {
-    btn.textContent = '⟡ Join Discord for Lifetime License';
-    btn.onclick = function(e) {
-      e.preventDefault();
-      window.open('https://discord.gg/dhHptTkB6D', '_blank');
-    };
-  } else {
-    btn.textContent = '⟡ Proceed to Checkout';
-    btn.onclick = function(e) {
-      e.preventDefault();
-      const p = products[currentProduct];
-      const url = 'https://kairoproducts.mysellauth.com/checkout-link?cart[0][productId]=' + plan.productId + '&cart[0][variantId]=' + plan.variantId + '&cart[0][quantity]=1';
-      window.open(url, '_blank');
-    };
-  }
-}
-
-// ---- FAQ ----
-function toggleFaq(el) {
-  const item = el.parentElement;
-  item.classList.toggle('open');
-}
-
-// ---- PLAN CHIP SELECTOR (products page) ----
-function selectPlan(el, product, price, label) {
-  el.closest('.product-plan-chips').querySelectorAll('.plan-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-// ---- DETAILS MODAL ----
-var _mdata = {
-  apex: {
-    icon: '🎯', game: 'Apex Legends', name: 'APEX',
-    desc: 'Our most advanced Apex Legends suite. Precision aimbot with full bone selection, smooth aim curves, and a no-recoil system tuned specifically for Apex recoil patterns. Undetected since launch.',
-    features: ['Precision Aimbot — bone select, FOV, smooth', 'No Recoil — per-weapon profiles', 'ESP — player, distance, health bars', 'Loot ESP & item rarity filter', 'Radar overlay (2D minimap)', 'HWID-locked license, instant delivery']
-  },
-  rust: {
-    icon: '🔧', game: 'Rust', name: 'RUST',
-    desc: 'Full-featured external Rust cheat built for players who want a real edge. Complete no-recoil system with per-weapon profiles covering every gun in the game, automatic attachment detection, and smooth human-like mouse correction that bypasses behavioral anti-cheat. Includes a full ESP suite with player skeletons, distance, health bars, and item filters.',
-    features: ['No Recoil — per-weapon profiles, every gun', 'Auto attachment detection', 'Player ESP — skeletons, health, distance', 'Item & loot filters', 'External — zero game file modification', 'HWID-locked license, instant delivery']
-  },
-  fortnite: {
-    icon: '⚡', game: 'Fortnite', name: 'FORTNITE',
-    desc: 'Built for Fortnite build meta. Snap-to-target aimbot, edit-assist scripting, and full ESP. Kernel-level EAC bypass keeps you undetected even through Fortnite anti-cheat updates.',
-    features: ['Snap aimbot — head, body, or custom bone', 'No recoil and no spread', 'Player ESP — health, shield, distance', 'Chest and loot ESP', 'Edit-assist scripting', 'Kernel EAC bypass — undetected']
-  }
-};
-
-function showDetails(key) {
-  window._modalProd = key;
-  var d = _mdata[key];
-  var p = products[key];
-  document.getElementById('m-icon').textContent = d.icon;
-  document.getElementById('m-game').textContent = d.game;
-  document.getElementById('m-name').textContent = d.name;
-  document.getElementById('m-desc').textContent = d.desc;
-  var feats = document.getElementById('m-feats');
-  feats.innerHTML = '';
-  d.features.forEach(function(f) {
-    var el = document.createElement('div');
-    el.className = 'modal-feat';
-    el.textContent = f;
-    feats.appendChild(el);
-  });
-  var prices = document.getElementById('m-prices');
-  prices.innerHTML = '';
-  p.plans.forEach(function(plan) {
-    var chip = document.createElement('div');
-    chip.className = 'modal-price-chip';
-    chip.innerHTML = '<div class="modal-price-dur">' + plan.label + '</div><div class="modal-price-amt">$' + plan.price.toFixed(2) + '</div>';
-    prices.appendChild(chip);
-  });
-  document.getElementById('detailsModal').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('detailsModal').classList.remove('open');
-}
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
-});
-
-// ---- HASH ROUTING ----
-var hashMap = {
-  '':        'home',
-  'home':    'home',
-  'shop':    'products',
-  'faq':     'faq',
-  'status':  'status'
-};
-
-function pageToHash(page) {
-  var map = { home: '', products: 'shop', faq: 'faq', status: 'status', buy: 'shop', main: '' };
-  return map[page] !== undefined ? map[page] : page;
-}
-
-// Override showPage to also update the URL hash
-var _originalShowPage = showPage;
-showPage = function(page) {
-  _originalShowPage(page);
-  var hash = pageToHash(page);
-  history.replaceState(null, '', hash ? '#' + hash : window.location.pathname);
-};
-
-// On load, read the hash and navigate to the right page
-function handleHashOnLoad() {
-  var hash = window.location.hash.replace('#', '').toLowerCase();
-  var page = hashMap[hash];
-  if (page && page !== 'home') {
-    _originalShowPage(page);
-  }
-}
-
-window.addEventListener('load', handleHashOnLoad);
-window.addEventListener('hashchange', function() {
-  var hash = window.location.hash.replace('#', '').toLowerCase();
-  var page = hashMap[hash];
-  if (page) _originalShowPage(page);
-});
+    /* ---------- footer microline ---------- */
+    const micro = document.querySelector("[data-micro]");
+    if (micro) micro.textContent = "REALLYWEIRDASSETS".repeat(60);
+  })();
 </script>
 </body>
 </html>
