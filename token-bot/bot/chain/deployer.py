@@ -184,7 +184,9 @@ class TokenDeployer:
         ]
         return ixs
 
-    async def _await_confirmation(self, sig: Signature, last_valid_block_height: int) -> None:
+    async def _await_confirmation(
+        self, sig: Signature, last_valid_block_height: int, raw_tx: bytes | None = None
+    ) -> None:
         """Poll until confirmed, failed, or blockhash expired.
 
         Raises DeploymentError if the tx failed or provably expired. If the RPC
@@ -210,7 +212,14 @@ class TokenDeployer:
                 if final is not None and final.err is None:
                     return
                 raise DeploymentError("Transaction expired before confirmation (congestion). Nothing was created.")
-            await asyncio.sleep(1.0)
+            if raw_tx is not None:
+                # Re-broadcast until confirmed or expired: under congestion leaders drop txs.
+                # Same signature, so a duplicate can never land twice.
+                try:
+                    await self._client.send_raw_transaction(raw_tx, opts=TxOpts(skip_preflight=True, max_retries=0))
+                except (RPCException, SolanaRpcException):
+                    pass
+            await asyncio.sleep(2.0)
 
     async def _ensure_balance(self, required_lamports: int) -> None:
         balance = await self.payer_balance()
@@ -256,7 +265,7 @@ class TokenDeployer:
             log.warning("Transport error while sending %s; checking status", sig, exc_info=True)
 
         try:
-            await self._await_confirmation(sig, blockhash.value.last_valid_block_height)
+            await self._await_confirmation(sig, blockhash.value.last_valid_block_height, bytes(tx))
         except DeploymentError as exc:
             if isinstance(exc.__cause__, SolanaRpcException):
                 raise DeploymentUnconfirmed(mint, sig) from exc

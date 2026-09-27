@@ -91,7 +91,7 @@ def load_config() -> Config:
         cluster=cluster,
         rpc_url=_require("SOLANA_RPC_URL"),
         payer=_load_keypair(_require("PAYER_PRIVATE_KEY")),
-        priority_fee_micro_lamports=int(os.getenv("PRIORITY_FEE_MICROLAMPORTS", "50000")),
+        priority_fee_micro_lamports=int(os.getenv("PRIORITY_FEE_MICROLAMPORTS", "1000000")),
         min_payer_balance_lamports=int(
             Decimal(os.getenv("MIN_PAYER_BALANCE_SOL", "0.05")) * LAMPORTS_PER_SOL
         ),
