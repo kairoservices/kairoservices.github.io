@@ -152,7 +152,7 @@ class FlowTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Your token has been created!", self.texts()[-1])
         p = deployer.params
         self.assertEqual((p.symbol, p.decimals, p.supply), ("MOON", 6, 1_000_000))
-        self.assertEqual((p.revoke_mint, p.revoke_freeze, p.revoke_update), (False, True, False))
+        self.assertEqual((p.revoke_mint, p.revoke_freeze, p.revoke_update), (False, True, True))
         self.assertIsNone(await dp.fsm.get_context(self.bot, CHAT.id, USER.id).get_state())
 
     async def test_pump_flow_with_dev_buy(self) -> None:

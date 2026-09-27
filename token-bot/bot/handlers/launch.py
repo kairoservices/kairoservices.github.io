@@ -321,8 +321,8 @@ async def cmd_launch(message: Message, state: FSMContext) -> None:
         await message.answer("⏳ A deployment is already running.")
         return
     await state.clear()
-    # Recommended defaults: fixed supply, no freeze, metadata still editable.
-    await state.update_data(revoke_mint=True, revoke_freeze=True, revoke_update=False)
+    # Default: revoke all three (fixed supply, no freeze, locked metadata).
+    await state.update_data(revoke_mint=True, revoke_freeze=True, revoke_update=True)
     await state.set_state(LaunchToken.name)
     await message.answer(
         "🚀 <b>Launch a new token</b>\n\n"
