@@ -74,7 +74,7 @@ def tokenomics_kb() -> InlineKeyboardMarkup:
 
 def authorities_kb(revoke_mint: bool, revoke_freeze: bool, revoke_update: bool) -> InlineKeyboardMarkup:
     def label(title: str, revoked: bool) -> str:
-        return f"{'🔒 Revoke' if revoked else '🔑 Keep'} {title}"
+        return f"{title}: {'🔒 REVOKE' if revoked else '🔑 keep'} (tap to change)"
 
     kb = InlineKeyboardBuilder()
     kb.button(text=label("Mint authority", revoke_mint), callback_data=AuthorityCb(action="mint"))
