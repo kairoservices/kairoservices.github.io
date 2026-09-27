@@ -534,6 +534,9 @@ async def on_dev_buy_preset(
 ) -> None:
     await cb.answer()
     await msg.edit_reply_markup(reply_markup=None)
+    if callback_data.sol == "custom":
+        await msg.answer("✏️ Type the exact SOL amount for the dev buy, e.g. <code>0.37</code>")
+        return
     await _set_dev_buy(msg, state, callback_data.sol, config=config, deployer=deployer, prices=prices)
 
 

@@ -50,6 +50,7 @@ class Config:
     pinata_gateway: str
     pump_enabled: bool
     pump_fee_bps: int
+    pump_slippage_bps: int
     pump_max_dev_buy_lamports: int
     pump_lookup_table: Pubkey | None
     pump_lookup_table_file: Path
@@ -99,6 +100,7 @@ def load_config() -> Config:
         pinata_gateway=gateway,
         pump_enabled=os.getenv("PUMP_ENABLED", "true").strip().lower() in {"1", "true", "yes"},
         pump_fee_bps=int(os.getenv("PUMP_FEE_BPS", "300")),
+        pump_slippage_bps=int(os.getenv("PUMP_SLIPPAGE_BPS", "1000")),
         pump_max_dev_buy_lamports=int(Decimal(os.getenv("PUMP_MAX_DEV_BUY_SOL", "5")) * LAMPORTS_PER_SOL),
         pump_lookup_table=lut,
         pump_lookup_table_file=lut_file,

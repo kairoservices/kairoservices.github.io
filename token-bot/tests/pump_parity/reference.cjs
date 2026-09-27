@@ -54,11 +54,28 @@ async function main() {
     mayhemMode: false,
   });
 
-  console.log(JSON.stringify(ixs.map((ix) => ({
+  const { TOKEN_2022_PROGRAM_ID } = require("@solana/spl-token");
+  const trade = {
+    user: pk(input.user),
+    mint: pk(input.mint),
+    creator: pk(input.creator),
+    feeRecipient: pk(input.feeRecipient),
+    buybackFeeRecipient: pk(input.buybackFeeRecipient),
+    tokenProgram: TOKEN_2022_PROGRAM_ID,
+  };
+  const buy = await PUMP_SDK.getBuyInstructionRaw({
+    ...trade, amount: new BN(input.tokenAmount), solAmount: new BN(input.solAmount),
+  });
+  const sell = await PUMP_SDK.getSellInstructionRaw({
+    ...trade, amount: new BN(input.tokenAmount), solAmount: new BN(input.minSolOut),
+  });
+
+  const asJson = (ix) => ({
     programId: ix.programId.toBase58(),
     data: Buffer.from(ix.data).toString("hex"),
     keys: ix.keys.map((k) => [k.pubkey.toBase58(), k.isSigner, k.isWritable]),
-  }))));
+  });
+  console.log(JSON.stringify({ createAndBuy: ixs.map(asJson), buy: asJson(buy), sell: asJson(sell) }));
 }
 
 main().catch((err) => {

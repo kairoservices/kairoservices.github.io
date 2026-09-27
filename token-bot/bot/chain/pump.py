@@ -32,6 +32,7 @@ _ZERO = Pubkey.default()
 
 _CREATE_V2_DISCRIMINATOR = bytes([214, 144, 76, 236, 95, 139, 49, 180])
 _BUY_DISCRIMINATOR = bytes([102, 6, 61, 18, 1, 218, 235, 234])
+_SELL_DISCRIMINATOR = bytes([51, 230, 133, 164, 1, 127, 131, 173])
 
 
 def _pda(seeds: list[bytes], program: Pubkey = PUMP_PROGRAM_ID) -> Pubkey:
@@ -65,6 +66,10 @@ def user_volume_accumulator_pda(user: Pubkey) -> Pubkey:
 
 def ata_2022(owner: Pubkey, mint: Pubkey) -> Pubkey:
     return get_associated_token_address(owner, mint, TOKEN_2022_PROGRAM_ID)
+
+
+def ata(owner: Pubkey, mint: Pubkey, token_program: Pubkey) -> Pubkey:
+    return get_associated_token_address(owner, mint, token_program)
 
 
 # --------------------------------------------------------------------------- account decoding
@@ -165,13 +170,14 @@ class BondingCurveState:
     real_token_reserves: int
     real_sol_reserves: int
     token_total_supply: int
-    complete: bool
+    complete: bool  # graduated: the curve no longer trades
+    creator: Pubkey
 
     @classmethod
     def decode(cls, data: bytes) -> BondingCurveState:
         r = _Reader(data)
         vt, vs, rt, rs, supply = (r.u64() for _ in range(5))
-        return cls(vt, vs, rt, rs, supply, r.bool())
+        return cls(vt, vs, rt, rs, supply, r.bool(), r.pubkey())
 
     @property
     def market_cap_lamports(self) -> int:
@@ -199,14 +205,41 @@ def quote_first_buy(g: PumpGlobal, sol_lamports: int, assumed_fee_bps: int) -> i
     actual cost stays under `max_sol_cost = sol_lamports`. If the real rate
     is higher, preflight fails with a slippage error and nothing is spent.
     """
-    fee_bps = max(
-        assumed_fee_bps,
-        g.fee_basis_points + g.creator_fee_basis_points + g.buyback_basis_points,
+    return _tokens_for_sol(
+        g.initial_virtual_token_reserves,
+        g.initial_virtual_sol_reserves,
+        g.initial_real_token_reserves,
+        sol_lamports,
+        _fee_bps(g, assumed_fee_bps),
     )
+
+
+def quote_buy(g: PumpGlobal, curve: BondingCurveState, sol_lamports: int, assumed_fee_bps: int) -> int:
+    """Tokens a buy of `sol_lamports` (fees included) receives at the curve's current price."""
+    return _tokens_for_sol(
+        curve.virtual_token_reserves,
+        curve.virtual_sol_reserves,
+        curve.real_token_reserves,
+        sol_lamports,
+        _fee_bps(g, assumed_fee_bps),
+    )
+
+
+def quote_sell(g: PumpGlobal, curve: BondingCurveState, token_amount: int, assumed_fee_bps: int) -> int:
+    """Lamports received for selling `token_amount`, after fees (conservative)."""
+    vt, vs = curve.virtual_token_reserves, curve.virtual_sol_reserves
+    gross = token_amount * vs // (vt + token_amount)
+    return gross * 10_000 // (10_000 + _fee_bps(g, assumed_fee_bps))
+
+
+def _fee_bps(g: PumpGlobal, assumed_fee_bps: int) -> int:
+    return max(assumed_fee_bps, g.fee_basis_points + g.creator_fee_basis_points + g.buyback_basis_points)
+
+
+def _tokens_for_sol(vt: int, vs: int, real_tokens: int, sol_lamports: int, fee_bps: int) -> int:
     net_in = (sol_lamports - 1) * 10_000 // (10_000 + fee_bps)
-    vt, vs = g.initial_virtual_token_reserves, g.initial_virtual_sol_reserves
     tokens = vt - (vt * vs) // (vs + net_in) - 1  # constant product, rounded down
-    return max(0, min(tokens, g.initial_real_token_reserves))
+    return max(0, min(tokens, real_tokens))
 
 
 def market_cap_after_first_buy(g: PumpGlobal, token_amount: int) -> int:
@@ -272,6 +305,7 @@ def buy_instruction(
     buyback_fee_recipient: Pubkey,
     token_amount: int,
     max_sol_cost: int,
+    token_program: Pubkey = TOKEN_2022_PROGRAM_ID,
 ) -> Instruction:
     data = _BUY_DISCRIMINATOR + struct.pack("<QQ", token_amount, max_sol_cost) + b"\x01"  # track_volume: true
     curve = bonding_curve_pda(mint)
@@ -280,11 +314,11 @@ def buy_instruction(
         AccountMeta(fee_recipient, is_signer=False, is_writable=True),
         AccountMeta(mint, is_signer=False, is_writable=False),
         AccountMeta(curve, is_signer=False, is_writable=True),
-        AccountMeta(ata_2022(curve, mint), is_signer=False, is_writable=True),
-        AccountMeta(ata_2022(user, mint), is_signer=False, is_writable=True),
+        AccountMeta(ata(curve, mint, token_program), is_signer=False, is_writable=True),
+        AccountMeta(ata(user, mint, token_program), is_signer=False, is_writable=True),
         AccountMeta(user, is_signer=True, is_writable=True),
         AccountMeta(SYS_PROGRAM_ID, is_signer=False, is_writable=False),
-        AccountMeta(TOKEN_2022_PROGRAM_ID, is_signer=False, is_writable=False),
+        AccountMeta(token_program, is_signer=False, is_writable=False),
         AccountMeta(creator_vault_pda(creator), is_signer=False, is_writable=True),
         AccountMeta(EVENT_AUTHORITY_PDA, is_signer=False, is_writable=False),
         AccountMeta(PUMP_PROGRAM_ID, is_signer=False, is_writable=False),
@@ -293,6 +327,41 @@ def buy_instruction(
         AccountMeta(FEE_CONFIG_PDA, is_signer=False, is_writable=False),
         AccountMeta(PUMP_FEE_PROGRAM_ID, is_signer=False, is_writable=False),
         # Remaining accounts the program expects after the IDL list (see SDK getBuyInstructionInternal).
+        AccountMeta(bonding_curve_v2_pda(mint), is_signer=False, is_writable=False),
+        AccountMeta(buyback_fee_recipient, is_signer=False, is_writable=True),
+    ]
+    return Instruction(PUMP_PROGRAM_ID, data, accounts)
+
+
+def sell_instruction(
+    *,
+    mint: Pubkey,
+    user: Pubkey,
+    creator: Pubkey,
+    fee_recipient: Pubkey,
+    buyback_fee_recipient: Pubkey,
+    token_amount: int,
+    min_sol_output: int,
+    token_program: Pubkey = TOKEN_2022_PROGRAM_ID,
+) -> Instruction:
+    data = _SELL_DISCRIMINATOR + struct.pack("<QQ", token_amount, min_sol_output)
+    curve = bonding_curve_pda(mint)
+    accounts = [
+        AccountMeta(GLOBAL_PDA, is_signer=False, is_writable=False),
+        AccountMeta(fee_recipient, is_signer=False, is_writable=True),
+        AccountMeta(mint, is_signer=False, is_writable=False),
+        AccountMeta(curve, is_signer=False, is_writable=True),
+        AccountMeta(ata(curve, mint, token_program), is_signer=False, is_writable=True),
+        AccountMeta(ata(user, mint, token_program), is_signer=False, is_writable=True),
+        AccountMeta(user, is_signer=True, is_writable=True),
+        AccountMeta(SYS_PROGRAM_ID, is_signer=False, is_writable=False),
+        AccountMeta(creator_vault_pda(creator), is_signer=False, is_writable=True),  # note: before token_program
+        AccountMeta(token_program, is_signer=False, is_writable=False),
+        AccountMeta(EVENT_AUTHORITY_PDA, is_signer=False, is_writable=False),
+        AccountMeta(PUMP_PROGRAM_ID, is_signer=False, is_writable=False),
+        AccountMeta(FEE_CONFIG_PDA, is_signer=False, is_writable=False),
+        AccountMeta(PUMP_FEE_PROGRAM_ID, is_signer=False, is_writable=False),
+        # Remaining accounts (see SDK getSellInstructionInternal, non-cashback coins).
         AccountMeta(bonding_curve_v2_pda(mint), is_signer=False, is_writable=False),
         AccountMeta(buyback_fee_recipient, is_signer=False, is_writable=True),
     ]

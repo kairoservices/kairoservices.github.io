@@ -15,3 +15,7 @@ class LaunchToken(StatesGroup):
     authorities = State()
     confirm = State()
     deploying = State()
+
+
+class TradeToken(StatesGroup):
+    buy_amount = State()

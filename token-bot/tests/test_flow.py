@@ -20,7 +20,7 @@ from bot.chain import pump
 from bot.chain.deployer import DeploymentError
 from bot.handlers import build_router
 from bot.middlewares import AllowlistMiddleware
-from bot.models import DeployResult, PumpDeployResult
+from bot.models import DeployResult, PumpDeployResult, PumpTradeResult
 
 CHAT = Chat(id=1, type="private")
 USER = User(id=42, is_bot=False, first_name="dev")
@@ -50,7 +50,7 @@ class FakeSession(BaseSession):
         self.calls.append(method)
         if isinstance(method, (AnswerCallbackQuery, DeleteMessage)):
             return True
-        return Message(message_id=99, date=datetime.datetime.now(), chat=CHAT, text="x")
+        return Message(message_id=99, date=datetime.datetime.now(), chat=CHAT, text="x").as_(bot)
 
     async def close(self) -> None:
         pass
@@ -63,6 +63,7 @@ class FakeDeployer:
     def __init__(self, fail_first: bool = False) -> None:
         self.fail_first = fail_first
         self.params: Any = None
+        self.trades: list[tuple] = []
 
     async def deploy(self, p):
         self.params = p
@@ -81,6 +82,15 @@ class FakeDeployer:
             Keypair().pubkey(), "sig", tokens, GLOBAL.initial_market_cap_lamports,
             pump.market_cap_after_first_buy(GLOBAL, tokens), 0.01,
         )
+
+
+    async def pump_sell(self, mint, percent):
+        self.trades.append(("sell", str(mint), percent))
+        return PumpTradeResult("sig", "sell", 250 * 10**6, 10**7, 750 * 10**6, 28 * 10**9, 0.01)
+
+    async def pump_buy(self, mint, lamports):
+        self.trades.append(("buy", str(mint), lamports))
+        return PumpTradeResult("sig", "buy", 500 * 10**6, lamports, 1_250 * 10**6, 29 * 10**9, 0.02)
 
 
 class FakeIpfs:
@@ -171,6 +181,30 @@ class FlowTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Your token has been created!", texts[-1])
         self.assertIn("Market cap:", texts[-1])
         self.assertEqual(deployer.params.dev_buy_lamports, 200_000_000)
+
+    async def test_custom_dev_buy_then_sell_and_buy_more(self) -> None:
+        deployer = FakeDeployer()
+        dp = self.make_dp(deployer)
+        mint = str(Keypair().pubkey())
+        await self.run_steps(dp, [
+            self.msg("/launch"), self.msg("Moon Cat"), self.msg("MCAT"), self.cb("skip"), self.cb("skip"),
+            self.cb("mode:pump"), self.msg(str(Keypair().pubkey())),
+            self.cb("devbuy:custom"), self.msg("0.37"), self.cb("confirm:deploy"),
+        ])
+        self.assertEqual(deployer.params.dev_buy_lamports, 370_000_000)
+        final_kb = [b.text for row in self.session.calls[-1].reply_markup.inline_keyboard for b in row]
+        self.assertIn("🔴 Sell 25%", final_kb)
+        self.assertIn("🟢 Buy more", final_kb)
+
+        await self.run_steps(dp, [
+            self.cb(f"tr:sell:50:{mint}"),
+            self.cb(f"tr:buy:0:{mint}"), self.msg("99"), self.msg("0.25"),
+        ])
+        self.assertEqual(deployer.trades, [("sell", mint, 50), ("buy", mint, 250_000_000)])
+        texts = self.texts()
+        self.assertTrue(any("Sold" in t for t in texts))
+        self.assertTrue(any("Bought" in t for t in texts))
+        self.assertTrue(any("Enter between" in t for t in texts))  # 99 SOL rejected
 
     async def test_unauthorized_user_blocked(self) -> None:
         dp = self.make_dp(FakeDeployer())

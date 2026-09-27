@@ -31,6 +31,7 @@ async def main() -> None:
         priority_fee_micro_lamports=config.priority_fee_micro_lamports,
         min_payer_balance_lamports=config.min_payer_balance_lamports,
         pump_fee_bps=config.pump_fee_bps,
+        pump_slippage_bps=config.pump_slippage_bps,
         pump_lookup_table=config.pump_lookup_table,
         # Persist so restarts reuse the table instead of paying rent for a new one.
         on_lookup_table_created=lambda address: config.pump_lookup_table_file.write_text(str(address)),

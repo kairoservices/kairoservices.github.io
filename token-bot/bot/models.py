@@ -57,3 +57,14 @@ class PumpDeployResult:
     initial_market_cap_lamports: int
     market_cap_lamports: int | None  # after the dev buy; None if the curve read failed
     curve_progress: float | None  # 0..1 toward graduation
+
+
+@dataclass(frozen=True, slots=True)
+class PumpTradeResult:
+    signature: str
+    side: str  # "buy" | "sell"
+    token_amount: int  # raw units traded
+    sol_lamports: int  # max spent (buy) or minimum received (sell)
+    tokens_left: int  # bot wallet balance after the trade, raw units
+    market_cap_lamports: int | None
+    curve_progress: float | None

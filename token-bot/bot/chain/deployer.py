@@ -38,7 +38,7 @@ from spl.token.models import InitializeMintParams, MintToParams, SetAuthorityPar
 
 from bot.chain import lookup_table, pump
 from bot.chain.metaplex import create_metadata_account_v3, find_metadata_pda
-from bot.models import DeployResult, PumpDeployResult, PumpLaunchParams, TokenParams
+from bot.models import DeployResult, PumpDeployResult, PumpLaunchParams, PumpTradeResult, TokenParams
 
 log = logging.getLogger(__name__)
 
@@ -83,6 +83,7 @@ class TokenDeployer:
         priority_fee_micro_lamports: int,
         min_payer_balance_lamports: int,
         pump_fee_bps: int = 300,
+        pump_slippage_bps: int = 1000,
         pump_lookup_table: Pubkey | None = None,
         on_lookup_table_created: Callable[[Pubkey], object] | None = None,
     ) -> None:
@@ -91,6 +92,7 @@ class TokenDeployer:
         self._priority_fee = priority_fee_micro_lamports
         self._min_balance = min_payer_balance_lamports
         self._pump_fee_bps = pump_fee_bps
+        self._pump_slippage_bps = pump_slippage_bps
         self._pump_lut_address = pump_lookup_table
         self._pump_lut: AddressLookupTableAccount | None = None
         self._on_lut_created = on_lookup_table_created
@@ -441,3 +443,117 @@ class TokenDeployer:
             market_cap_lamports=curve.market_cap_lamports if curve else None,
             curve_progress=curve.progress(g.initial_real_token_reserves) if curve else None,
         )
+
+    # ------------------------------------------------------------------ pump.fun trading (bot wallet)
+
+    async def _mint_token_program(self, mint: Pubkey) -> Pubkey:
+        resp = await self._with_retries(lambda: self._client.get_account_info(mint))
+        if resp.value is None:
+            raise DeploymentError("Mint not found")
+        return resp.value.owner
+
+    async def token_balance(self, mint: Pubkey, token_program: Pubkey) -> int:
+        account = pump.ata(self.payer_pubkey, mint, token_program)
+        resp = await self._with_retries(lambda: self._client.get_account_info(account))
+        if resp.value is None:
+            return 0
+        # SPL token account layout: amount is a u64 at offset 64 (same for Token-2022).
+        return int.from_bytes(bytes(resp.value.data)[64:72], "little")
+
+    async def _tradable_curve(self, mint: Pubkey) -> pump.BondingCurveState:
+        curve = await self.fetch_bonding_curve(mint)
+        if curve is None:
+            raise DeploymentError("Not a pump.fun coin (no bonding curve)")
+        if curve.complete:
+            raise DeploymentError("Coin has graduated from the bonding curve; trade it on PumpSwap instead")
+        return curve
+
+    async def _trade_result(
+        self, mint: Pubkey, token_program: Pubkey, g: pump.PumpGlobal, sig: str, side: str, tokens: int, sol: int
+    ) -> PumpTradeResult:
+        curve, left = None, 0
+        try:
+            curve = await self.fetch_bonding_curve(mint)
+            left = await self.token_balance(mint, token_program)
+        except DeploymentError:
+            log.warning("Post-trade read failed for %s", mint)
+        return PumpTradeResult(
+            signature=sig,
+            side=side,
+            token_amount=tokens,
+            sol_lamports=sol,
+            tokens_left=left,
+            market_cap_lamports=curve.market_cap_lamports if curve else None,
+            curve_progress=curve.progress(g.initial_real_token_reserves) if curve else None,
+        )
+
+    async def pump_buy(self, mint: Pubkey, sol_lamports: int) -> PumpTradeResult:
+        """Buy on the bonding curve with the bot wallet. Spends at most sol_lamports + slippage."""
+        g = await self.fetch_pump_global()
+        curve = await self._tradable_curve(mint)
+        token_program = await self._mint_token_program(mint)
+        await self._ensure_balance(self._min_balance + sol_lamports)
+
+        tokens = pump.quote_buy(g, curve, sol_lamports, self._pump_fee_bps)
+        if tokens == 0:
+            raise DeploymentError("Amount too small")
+        max_cost = sol_lamports * (10_000 + self._pump_slippage_bps) // 10_000
+        payer = self.payer_pubkey
+        ixs = [
+            set_compute_unit_limit(COMPUTE_UNIT_LIMIT),
+            set_compute_unit_price(self._priority_fee),
+            create_idempotent_associated_token_account(payer, payer, mint, token_program),
+            pump.buy_instruction(
+                mint=mint,
+                user=payer,
+                creator=curve.creator,
+                fee_recipient=g.pick_fee_recipient(),
+                buyback_fee_recipient=g.pick_buyback_fee_recipient(),
+                token_amount=tokens,
+                max_sol_cost=max_cost,
+                token_program=token_program,
+            ),
+        ]
+        lut = await self._ensure_pump_lookup_table(g)
+        sig = await self._send_trade(ixs, [lut], mint)
+        return await self._trade_result(mint, token_program, g, sig, "buy", tokens, max_cost)
+
+    async def pump_sell(self, mint: Pubkey, percent: int) -> PumpTradeResult:
+        """Sell `percent` (1-100) of the bot wallet's balance back into the bonding curve."""
+        if not 1 <= percent <= 100:
+            raise DeploymentError("Percent must be 1-100")
+        g = await self.fetch_pump_global()
+        curve = await self._tradable_curve(mint)
+        token_program = await self._mint_token_program(mint)
+        await self._ensure_balance(10_000_000)  # fees only
+
+        balance = await self.token_balance(mint, token_program)
+        tokens = balance if percent == 100 else balance * percent // 100
+        if tokens == 0:
+            raise DeploymentError(f"Bot wallet {self.payer_pubkey} holds none of this token")
+        expected = pump.quote_sell(g, curve, tokens, self._pump_fee_bps)
+        min_out = expected * (10_000 - self._pump_slippage_bps) // 10_000
+        ixs = [
+            set_compute_unit_limit(COMPUTE_UNIT_LIMIT),
+            set_compute_unit_price(self._priority_fee),
+            pump.sell_instruction(
+                mint=mint,
+                user=self.payer_pubkey,
+                creator=curve.creator,
+                fee_recipient=g.pick_fee_recipient(),
+                buyback_fee_recipient=g.pick_buyback_fee_recipient(),
+                token_amount=tokens,
+                min_sol_output=min_out,
+                token_program=token_program,
+            ),
+        ]
+        lut = await self._ensure_pump_lookup_table(g)
+        sig = await self._send_trade(ixs, [lut], mint)
+        return await self._trade_result(mint, token_program, g, sig, "sell", tokens, min_out)
+
+    async def _send_trade(self, ixs: list[Instruction], luts: list[AddressLookupTableAccount], mint: Pubkey) -> str:
+        try:
+            return await self._send_atomic(ixs, lookup_tables=luts)
+        except DeploymentUnconfirmed as exc:
+            # Re-label with the real mint for the handler's message.
+            raise DeploymentUnconfirmed(mint, exc.signature) from exc

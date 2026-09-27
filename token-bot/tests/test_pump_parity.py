@@ -35,7 +35,7 @@ def _as_json(ix) -> dict:
 )
 class PumpParityTest(unittest.TestCase):
     def test_create_v2_and_buy_match_official_sdk(self) -> None:
-        mint, user, creator, fee = (Keypair().pubkey() for _ in range(4))
+        mint, user, creator, fee, buyback = (Keypair().pubkey() for _ in range(5))
         case = {
             "mint": str(mint),
             "user": str(user),
@@ -46,12 +46,15 @@ class PumpParityTest(unittest.TestCase):
             "uri": "https://gateway.pinata.cloud/ipfs/QmTest",
             "tokenAmount": 12_345_678_901,
             "solAmount": 200_000_000,
+            "minSolOut": 150_000_000,
+            "buybackFeeRecipient": str(buyback),
         }
         out = subprocess.run(
             ["node", "reference.cjs"], cwd=PARITY_DIR, input=json.dumps(case),
             capture_output=True, text=True, check=True,
         )
-        ref_create, _ref_ata, ref_buy = json.loads(out.stdout)
+        ref = json.loads(out.stdout)
+        ref_create, _ref_ata, ref_buy = ref["createAndBuy"]
 
         create = pump.create_v2_instruction(
             mint=mint, user=user, creator=creator, name=case["name"], symbol=case["symbol"], uri=case["uri"]
@@ -67,6 +70,18 @@ class PumpParityTest(unittest.TestCase):
         )
         self.assertEqual(_as_json(create), ref_create)
         self.assertEqual(_as_json(buy), ref_buy)
+
+        trade = {"mint": mint, "user": user, "creator": creator, "fee_recipient": fee, "buyback_fee_recipient": buyback}
+        self.assertEqual(
+            _as_json(pump.buy_instruction(**trade, token_amount=case["tokenAmount"], max_sol_cost=case["solAmount"])),
+            ref["buy"],
+        )
+        self.assertEqual(
+            _as_json(
+                pump.sell_instruction(**trade, token_amount=case["tokenAmount"], min_sol_output=case["minSolOut"])
+            ),
+            ref["sell"],
+        )
 
 
 if __name__ == "__main__":

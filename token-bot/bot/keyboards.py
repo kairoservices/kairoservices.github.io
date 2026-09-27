@@ -19,6 +19,12 @@ class DevBuyCb(CallbackData, prefix="devbuy"):
     sol: str  # decimal string, e.g. "0.2"; "0" = no dev buy
 
 
+class TradeCb(CallbackData, prefix="tr"):
+    action: str  # "sell" | "buy"
+    pct: int  # sell percentage; 0 for buy
+    mint: str
+
+
 class TokenomicsCb(CallbackData, prefix="tok"):
     choice: str  # "default" | "custom"
 
@@ -56,8 +62,9 @@ def dev_buy_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     for sol in DEV_BUY_PRESETS:
         kb.button(text=f"{sol} SOL", callback_data=DevBuyCb(sol=sol))
+    kb.button(text="✏️ Custom amount", callback_data=DevBuyCb(sol="custom"))
     kb.button(text="No dev buy", callback_data=DevBuyCb(sol="0"))
-    kb.adjust(len(DEV_BUY_PRESETS), 1)
+    kb.adjust(len(DEV_BUY_PRESETS), 2)
     return kb.as_markup()
 
 
@@ -127,11 +134,17 @@ def dexscreener_url(mint: str) -> str:
     return f"https://dexscreener.com/solana/{mint}"
 
 
+SELL_PERCENTS = (25, 50, 75, 100)
+
+
 def pump_success_kb(mint: str, cluster: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text="📈 View on pump.fun", url=pump_coin_url(mint))
+    for pct in SELL_PERCENTS:
+        kb.button(text=f"🔴 Sell {pct}%", callback_data=TradeCb(action="sell", pct=pct, mint=mint))
+    kb.button(text="🟢 Buy more", callback_data=TradeCb(action="buy", pct=0, mint=mint))
+    kb.button(text="📈 pump.fun", url=pump_coin_url(mint))
     kb.button(text="🦅 DexScreener", url=dexscreener_url(mint))
     kb.button(text="📊 Solscan", url=solscan_token_url(mint, cluster))
     kb.button(text="✖️ Close", callback_data=DashboardCb(action="close"))
-    kb.adjust(1, 2, 1)
+    kb.adjust(len(SELL_PERCENTS), 1, 3, 1)
     return kb.as_markup()

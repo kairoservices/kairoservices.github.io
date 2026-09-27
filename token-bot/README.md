@@ -43,6 +43,14 @@ recipient. Freeze authority is never set if revoked. Update authority is "revoke
 
 Logo and metadata JSON go to IPFS through Pinata.
 
+## Trading after a pump.fun launch
+
+The launch dashboard has **Sell 25% / 50% / 75% / 100%** and **Buy more** buttons.
+They trade on the bonding curve **from the bot wallet**, so they only sell tokens the bot wallet holds
+(the dev buy lands there only when the creator wallet is the bot wallet). **Buy more** asks for a SOL amount.
+Price protection is `PUMP_SLIPPAGE_BPS` (default 10%). After the coin graduates, trade it on PumpSwap instead.
+Every creator-wallet sale is public, and pump.fun labels it "dev sold".
+
 ## Setup
 
 ```bash
