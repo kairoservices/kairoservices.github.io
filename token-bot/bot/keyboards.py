@@ -11,6 +11,14 @@ from bot.models import DEFAULT_DECIMALS, DEFAULT_SUPPLY
 RAYDIUM_CREATE_POOL_URL = "https://raydium.io/liquidity/create-pool/"
 
 
+class LaunchModeCb(CallbackData, prefix="mode"):
+    mode: str  # "spl" | "pump"
+
+
+class DevBuyCb(CallbackData, prefix="devbuy"):
+    sol: str  # decimal string, e.g. "0.2"; "0" = no dev buy
+
+
 class TokenomicsCb(CallbackData, prefix="tok"):
     choice: str  # "default" | "custom"
 
@@ -30,6 +38,26 @@ class DashboardCb(CallbackData, prefix="dash"):
 def skip_kb(label: str = "Skip") -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=f"⏭ {label}", callback_data="skip")
+    return kb.as_markup()
+
+
+def launch_mode_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(text="📈 pump.fun bonding curve (+ dev buy)", callback_data=LaunchModeCb(mode="pump"))
+    kb.button(text="🪙 Standard SPL token (custom supply)", callback_data=LaunchModeCb(mode="spl"))
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+DEV_BUY_PRESETS = ("0.1", "0.2", "0.5", "1")
+
+
+def dev_buy_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    for sol in DEV_BUY_PRESETS:
+        kb.button(text=f"{sol} SOL", callback_data=DevBuyCb(sol=sol))
+    kb.button(text="No dev buy", callback_data=DevBuyCb(sol="0"))
+    kb.adjust(len(DEV_BUY_PRESETS), 1)
     return kb.as_markup()
 
 
@@ -86,6 +114,24 @@ def success_kb(mint: str, cluster: str) -> InlineKeyboardMarkup:
     kb.button(text="💧 Create Liquidity Pool", url=RAYDIUM_CREATE_POOL_URL)
     kb.button(text="🔎 View on Explorer", url=explorer_address_url(mint, cluster))
     kb.button(text="📊 View on Solscan", url=solscan_token_url(mint, cluster))
+    kb.button(text="✖️ Close", callback_data=DashboardCb(action="close"))
+    kb.adjust(1, 2, 1)
+    return kb.as_markup()
+
+
+def pump_coin_url(mint: str) -> str:
+    return f"https://pump.fun/coin/{mint}"
+
+
+def dexscreener_url(mint: str) -> str:
+    return f"https://dexscreener.com/solana/{mint}"
+
+
+def pump_success_kb(mint: str, cluster: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(text="📈 View on pump.fun", url=pump_coin_url(mint))
+    kb.button(text="🦅 DexScreener", url=dexscreener_url(mint))
+    kb.button(text="📊 Solscan", url=solscan_token_url(mint, cluster))
     kb.button(text="✖️ Close", callback_data=DashboardCb(action="close"))
     kb.adjust(1, 2, 1)
     return kb.as_markup()

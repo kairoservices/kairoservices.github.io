@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 .venv/
+node_modules/
+pump_lookup_table.txt

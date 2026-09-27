@@ -1,0 +1,9 @@
+{
+  "name": "pump-parity",
+  "private": true,
+  "type": "commonjs",
+  "description": "Builds reference pump.fun instructions with the official SDK for tests/test_pump_parity.py",
+  "dependencies": {
+    "@pump-fun/pump-sdk": "2.0.0"
+  }
+}

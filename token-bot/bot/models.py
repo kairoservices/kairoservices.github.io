@@ -38,3 +38,22 @@ class TokenParams:
 class DeployResult:
     mint: Pubkey
     signature: str
+
+
+@dataclass(frozen=True, slots=True)
+class PumpLaunchParams:
+    name: str
+    symbol: str
+    metadata_uri: str
+    recipient: Pubkey  # coin creator (earns creator fees) and receiver of the dev buy
+    dev_buy_lamports: int  # 0 = no initial buy
+
+
+@dataclass(frozen=True, slots=True)
+class PumpDeployResult:
+    mint: Pubkey
+    signature: str
+    dev_tokens: int  # raw units (6 decimals)
+    initial_market_cap_lamports: int
+    market_cap_lamports: int | None  # after the dev buy; None if the curve read failed
+    curve_progress: float | None  # 0..1 toward graduation

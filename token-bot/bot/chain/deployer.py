@@ -9,36 +9,43 @@ from typing import TypeVar
 
 from solana.exceptions import SolanaRpcException
 from solana.rpc.async_api import AsyncClient
-from solana.rpc.commitment import Confirmed
+from solana.rpc.commitment import Confirmed, Finalized
 from solana.rpc.core import RPCException
 from solana.rpc.models import TxOpts
+from solders.address_lookup_table_account import AddressLookupTable, AddressLookupTableAccount
 from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price
 from solders.instruction import Instruction
 from solders.keypair import Keypair
 from solders.message import MessageV0
 from solders.pubkey import Pubkey
 from solders.signature import Signature
+from solders.system_program import ID as SYS_PROGRAM_ID
 from solders.system_program import CreateAccountParams, create_account
 from solders.transaction import VersionedTransaction
 from solders.transaction_status import TransactionConfirmationStatus
-from spl.token.constants import TOKEN_PROGRAM_ID
+from spl.token.constants import ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID
 from spl.token.instructions import (
     AuthorityType,
     create_associated_token_account,
+    create_idempotent_associated_token_account,
     get_associated_token_address,
     initialize_mint,
     mint_to,
     set_authority,
+    transfer_checked,
 )
-from spl.token.models import InitializeMintParams, MintToParams, SetAuthorityParams
+from spl.token.models import InitializeMintParams, MintToParams, SetAuthorityParams, TransferCheckedParams
 
+from bot.chain import lookup_table, pump
 from bot.chain.metaplex import create_metadata_account_v3, find_metadata_pda
-from bot.models import DeployResult, TokenParams
+from bot.models import DeployResult, PumpDeployResult, PumpLaunchParams, TokenParams
 
 log = logging.getLogger(__name__)
 
 MINT_ACCOUNT_SIZE = 82
 COMPUTE_UNIT_LIMIT = 300_000
+PUMP_COMPUTE_UNIT_LIMIT = 500_000  # SDK guidance for create + buy
+PACKET_DATA_SIZE = 1232
 RPC_ATTEMPTS = 4
 
 T = TypeVar("T")
@@ -75,11 +82,19 @@ class TokenDeployer:
         *,
         priority_fee_micro_lamports: int,
         min_payer_balance_lamports: int,
+        pump_fee_bps: int = 300,
+        pump_lookup_table: Pubkey | None = None,
+        on_lookup_table_created: Callable[[Pubkey], object] | None = None,
     ) -> None:
         self._client = AsyncClient(rpc_url, commitment=Confirmed)
         self._payer = payer
         self._priority_fee = priority_fee_micro_lamports
         self._min_balance = min_payer_balance_lamports
+        self._pump_fee_bps = pump_fee_bps
+        self._pump_lut_address = pump_lookup_table
+        self._pump_lut: AddressLookupTableAccount | None = None
+        self._on_lut_created = on_lookup_table_created
+        self._lut_lock = asyncio.Lock()
 
     @property
     def payer_pubkey(self) -> Pubkey:
@@ -197,31 +212,36 @@ class TokenDeployer:
                 raise DeploymentError("Transaction expired before confirmation (congestion). Nothing was created.")
             await asyncio.sleep(1.0)
 
-    async def deploy(self, p: TokenParams) -> DeployResult:
+    async def _ensure_balance(self, required_lamports: int) -> None:
         balance = await self.payer_balance()
-        if balance < self._min_balance:
+        if balance < required_lamports:
             raise DeploymentError(
                 f"Payer wallet {self.payer_pubkey} has {balance / 1e9:.4f} SOL; "
-                f"needs at least {self._min_balance / 1e9:.4f} SOL."
+                f"needs at least {required_lamports / 1e9:.4f} SOL."
             )
 
-        mint_kp = Keypair()
-        mint = mint_kp.pubkey()
-
-        rent = await self._with_retries(
-            lambda: self._client.get_minimum_balance_for_rent_exemption(MINT_ACCOUNT_SIZE)
-        )
+    async def _send_atomic(
+        self,
+        instructions: list[Instruction],
+        mint_kp: Keypair | None = None,
+        lookup_tables: list[AddressLookupTableAccount] | None = None,
+    ) -> str:
+        """Sign with payer (+ mint keypair), send, and wait for confirmation. Returns the signature."""
+        signers = [self._payer] + ([mint_kp] if mint_kp else [])
+        mint = mint_kp.pubkey() if mint_kp else Pubkey.default()
         blockhash = await self._with_retries(lambda: self._client.get_latest_blockhash(Confirmed))
-
         message = MessageV0.try_compile(
             payer=self.payer_pubkey,
-            instructions=self._build_instructions(p, mint, rent.value),
-            address_lookup_table_accounts=[],
+            instructions=instructions,
+            address_lookup_table_accounts=lookup_tables or [],
             recent_blockhash=blockhash.value.blockhash,
         )
-        tx = VersionedTransaction(message, [self._payer, mint_kp])
+        tx = VersionedTransaction(message, signers)
+        size = len(bytes(tx))
+        if size > PACKET_DATA_SIZE:
+            raise DeploymentError(f"Transaction too large ({size} > {PACKET_DATA_SIZE} bytes); shorten name/URI")
         sig = tx.signatures[0]
-        log.info("Sending deploy tx %s for mint %s", sig, mint)
+        log.info("Sending tx %s (%d bytes) for mint %s", sig, size, mint)
 
         try:
             await self._client.send_transaction(
@@ -241,6 +261,174 @@ class TokenDeployer:
             if isinstance(exc.__cause__, SolanaRpcException):
                 raise DeploymentUnconfirmed(mint, sig) from exc
             raise
+        return str(sig)
 
-        log.info("Deployed mint %s (tx %s)", mint, sig)
-        return DeployResult(mint=mint, signature=str(sig))
+    async def deploy(self, p: TokenParams) -> DeployResult:
+        """Standard SPL mint + Metaplex metadata."""
+        await self._ensure_balance(self._min_balance)
+        mint_kp = Keypair()
+        rent = await self._with_retries(
+            lambda: self._client.get_minimum_balance_for_rent_exemption(MINT_ACCOUNT_SIZE)
+        )
+        sig = await self._send_atomic(self._build_instructions(p, mint_kp.pubkey(), rent.value), mint_kp)
+        log.info("Deployed mint %s (tx %s)", mint_kp.pubkey(), sig)
+        return DeployResult(mint=mint_kp.pubkey(), signature=sig)
+
+    # ------------------------------------------------------------------ pump.fun
+
+    async def fetch_pump_global(self) -> pump.PumpGlobal:
+        resp = await self._with_retries(lambda: self._client.get_account_info(pump.GLOBAL_PDA))
+        if resp.value is None:
+            raise DeploymentError("pump.fun program is not available on this cluster")
+        return pump.PumpGlobal.decode(bytes(resp.value.data))
+
+    async def fetch_bonding_curve(self, mint: Pubkey) -> pump.BondingCurveState | None:
+        resp = await self._with_retries(lambda: self._client.get_account_info(pump.bonding_curve_pda(mint)))
+        return pump.BondingCurveState.decode(bytes(resp.value.data)) if resp.value else None
+
+    def _pump_static_accounts(self, g: pump.PumpGlobal) -> list[Pubkey]:
+        """Accounts shared by every launch from this bot: candidates for the lookup table."""
+        zero = Pubkey.default()
+        fixed = [
+            pump.GLOBAL_PDA,
+            pump.MINT_AUTHORITY_PDA,
+            pump.EVENT_AUTHORITY_PDA,
+            pump.GLOBAL_VOLUME_ACCUMULATOR_PDA,
+            pump.FEE_CONFIG_PDA,
+            pump.PUMP_FEE_PROGRAM_ID,
+            pump.MAYHEM_PROGRAM_ID,
+            pump.MAYHEM_GLOBAL_PARAMS_PDA,
+            pump.MAYHEM_SOL_VAULT_PDA,
+            pump.user_volume_accumulator_pda(self.payer_pubkey),
+            SYS_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_2022_PROGRAM_ID,
+            pump.PUMP_PROGRAM_ID,
+        ]
+        recipients = [g.fee_recipient, *g.fee_recipients, *g.buyback_fee_recipients]
+        return list(dict.fromkeys(k for k in fixed + recipients if k != zero))
+
+    async def _fetch_lookup_table(self, address: Pubkey) -> AddressLookupTableAccount | None:
+        resp = await self._with_retries(lambda: self._client.get_account_info(address))
+        if resp.value is None:
+            return None
+        table = AddressLookupTable.deserialize(bytes(resp.value.data))
+        return AddressLookupTableAccount(address, list(table.addresses))
+
+    async def _ensure_pump_lookup_table(self, g: pump.PumpGlobal) -> AddressLookupTableAccount:
+        """Load (or create once) the bot's ALT and extend it if pump.fun added fee recipients."""
+        try:
+            return await self._ensure_pump_lookup_table_locked(g)
+        except DeploymentUnconfirmed as exc:
+            # No coin exists yet; retrying only risks a spare lookup table (small, reclaimable rent).
+            raise DeploymentError(f"Lookup table setup not confirmed (tx {exc.signature}). Retry.") from exc
+
+    async def _ensure_pump_lookup_table_locked(self, g: pump.PumpGlobal) -> AddressLookupTableAccount:
+        async with self._lut_lock:
+            required = self._pump_static_accounts(g)
+            if self._pump_lut and set(required) <= set(self._pump_lut.addresses):
+                return self._pump_lut
+
+            payer = self.payer_pubkey
+            table = await self._fetch_lookup_table(self._pump_lut_address) if self._pump_lut_address else None
+            if table is None:
+                slot = await self._with_retries(lambda: self._client.get_slot(Finalized))
+                create_ix, address = lookup_table.create_lookup_table(payer, payer, slot.value)
+                await self._send_atomic([create_ix])
+                log.info("Created pump.fun lookup table %s", address)
+                self._pump_lut_address = address
+                if self._on_lut_created:
+                    self._on_lut_created(address)
+                table = AddressLookupTableAccount(address, [])
+
+            missing = [k for k in required if k not in set(table.addresses)]
+            for i in range(0, len(missing), lookup_table.MAX_ADDRESSES_PER_EXTEND):
+                chunk = missing[i : i + lookup_table.MAX_ADDRESSES_PER_EXTEND]
+                await self._send_atomic([lookup_table.extend_lookup_table(table.key, payer, payer, chunk)])
+            if missing:
+                # New entries are usable only from the slot after the extend.
+                start = (await self._with_retries(lambda: self._client.get_slot(Confirmed))).value
+                while (await self._with_retries(lambda: self._client.get_slot(Confirmed))).value <= start:
+                    await asyncio.sleep(0.4)
+                table = await self._fetch_lookup_table(table.key)
+                if table is None:
+                    raise DeploymentError("Lookup table disappeared after extending")
+
+            self._pump_lut = table
+            return table
+
+    def _build_pump_instructions(
+        self, p: PumpLaunchParams, g: pump.PumpGlobal, mint: Pubkey, token_amount: int
+    ) -> list[Instruction]:
+        payer = self.payer_pubkey
+        ixs = [
+            set_compute_unit_limit(PUMP_COMPUTE_UNIT_LIMIT),
+            set_compute_unit_price(self._priority_fee),
+            # Creator = recipient, so creator fees accrue to the user's wallet, not the bot's.
+            pump.create_v2_instruction(
+                mint=mint, user=payer, creator=p.recipient, name=p.name, symbol=p.symbol, uri=p.metadata_uri
+            ),
+        ]
+        if token_amount == 0:
+            return ixs
+
+        ixs += [
+            create_idempotent_associated_token_account(payer, payer, mint, TOKEN_2022_PROGRAM_ID),
+            pump.buy_instruction(
+                mint=mint,
+                user=payer,
+                creator=p.recipient,
+                fee_recipient=g.pick_fee_recipient(),
+                buyback_fee_recipient=g.pick_buyback_fee_recipient(),
+                token_amount=token_amount,
+                max_sol_cost=p.dev_buy_lamports,
+            ),
+        ]
+        if p.recipient != payer:
+            # Hand the bought tokens to the creator's wallet in the same transaction.
+            ixs += [
+                create_idempotent_associated_token_account(payer, p.recipient, mint, TOKEN_2022_PROGRAM_ID),
+                transfer_checked(
+                    TransferCheckedParams(
+                        program_id=TOKEN_2022_PROGRAM_ID,
+                        source=pump.ata_2022(payer, mint),
+                        mint=mint,
+                        dest=pump.ata_2022(p.recipient, mint),
+                        owner=payer,
+                        amount=token_amount,
+                        decimals=pump.PUMP_DECIMALS,
+                    )
+                ),
+            ]
+        return ixs
+
+    async def deploy_pump(self, p: PumpLaunchParams) -> PumpDeployResult:
+        """pump.fun bonding-curve coin, with the creator's first buy in the same transaction.
+
+        Atomic: if the buy fails, the coin is not created either.
+        """
+        g = await self.fetch_pump_global()
+        if not g.create_v2_enabled:
+            raise DeploymentError("pump.fun create_v2 is currently disabled")
+        await self._ensure_balance(self._min_balance + p.dev_buy_lamports)
+
+        token_amount = pump.quote_first_buy(g, p.dev_buy_lamports, self._pump_fee_bps) if p.dev_buy_lamports else 0
+        mint_kp = Keypair()
+        mint = mint_kp.pubkey()
+        lut = await self._ensure_pump_lookup_table(g)
+        sig = await self._send_atomic(self._build_pump_instructions(p, g, mint, token_amount), mint_kp, [lut])
+        log.info("Launched pump.fun coin %s (tx %s), dev buy %d tokens", mint, sig, token_amount)
+
+        curve = None
+        try:
+            curve = await self.fetch_bonding_curve(mint)
+        except DeploymentError:
+            log.warning("Could not read bonding curve for %s after launch", mint)
+        return PumpDeployResult(
+            mint=mint,
+            signature=sig,
+            dev_tokens=token_amount,
+            initial_market_cap_lamports=g.initial_market_cap_lamports,
+            market_cap_lamports=curve.market_cap_lamports if curve else None,
+            curve_progress=curve.progress(g.initial_real_token_reserves) if curve else None,
+        )
