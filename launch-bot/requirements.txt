@@ -1,0 +1,4 @@
+aiogram>=3.13,<4
+solana>=0.40,<0.41
+solders>=0.26
+python-dotenv>=1.0

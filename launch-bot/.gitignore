@@ -1,0 +1,6 @@
+.env
+wallets/
+launches.json
+*.tmp
+__pycache__/
+.venv/
