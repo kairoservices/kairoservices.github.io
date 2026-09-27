@@ -1,0 +1,5 @@
+aiogram>=3.31,<4
+solana>=0.40,<0.41
+solders>=0.29,<0.30
+aiohttp>=3.10,<4
+python-dotenv>=1.0,<2
